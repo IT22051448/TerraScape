@@ -16,6 +16,8 @@ import { validateInput } from "../../utils/actions/formActions";
 import { useDispatch } from "react-redux";
 import { signIn } from "../../utils/actions/authActions";
 import AntDesign from "react-native-vector-icons/AntDesign";
+import { getUserByEmail } from "../../utils/databases/firebaseDatabase";
+import { authenticate } from "../../store/authSlice";
 
 const initialState = {
   inputValues: {
@@ -56,14 +58,30 @@ const SignIn = () => {
         signIn(formState.inputValues.email, formState.inputValues.password)
       );
 
-      const { userData } = result;
+      const email = formState.inputValues.email;
+      const userFromDb = await getUserByEmail(email);
+      const userData = Object.values(userFromDb)[0];
+
+      const userDataToStore = {
+        token: result.userData.token,
+        userData: {
+          uid: userData.uid,
+          fullName: userData.fullName,
+          email: userData.email,
+          role: userData.role,
+        },
+      };
+
+      dispatch(authenticate(userDataToStore));
 
       setError(null);
       setIsLoading(false);
 
       // Navigate based on user role
       if (userData.role === "ServiceProvider") {
-        navigation.navigate("ServiceProviderHome");
+        navigation.navigate("ServiceProviderHome", {
+          fullName: userData.fullName,
+        });
       } else {
         navigation.navigate("CustomerHome");
       }

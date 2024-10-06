@@ -20,8 +20,9 @@ const authSlice = createSlice({
     clearAuth: (state) => {
       state.token = null;
       state.userData = null;
+      state.userData = payload.userData;
       state.didTryAutoLogin = false;
-    }
+    },
   },
 });
 
