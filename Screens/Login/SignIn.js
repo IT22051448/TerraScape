@@ -18,6 +18,7 @@ import { signIn } from "../../utils/actions/authActions";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { getUserByEmail } from "../../utils/databases/firebaseDatabase";
 import { authenticate } from "../../store/authSlice";
+import { signOut } from "firebase/auth";
 
 const initialState = {
   inputValues: {
@@ -62,33 +63,34 @@ const SignIn = () => {
       const userFromDb = await getUserByEmail(email);
       const userData = Object.values(userFromDb)[0];
 
-      const userDataToStore = {
-        token: result.userData.token,
-        userData: {
-          uid: userData.uid,
-          fullName: userData.fullName,
-          email: userData.email,
-          role: userData.role,
-        },
-      };
-
-      dispatch(authenticate(userDataToStore));
+      // Dispatch the authenticate action with user data
+      dispatch(
+        authenticate({
+          token: result.userData.token,
+          userData: {
+            uid: userData.uid,
+            fullName: userData.fullName,
+            email: userData.email,
+            imageUrl: userData.imageUrl, // Assume imageUrl is part of the user data
+            role: userData.role,
+          },
+        })
+      );
 
       setError(null);
       setIsLoading(false);
 
-      // Navigate based on user role
       if (userData.role === "ServiceProvider") {
-        navigation.navigate("ServiceProviderHome", {
-          fullName: userData.fullName,
-        });
+        navigation.navigate("ServiceProviderHome");
       } else {
         navigation.navigate("CustomerHome");
       }
     } catch (error) {
-      console.log(error);
       setIsLoading(false);
       setError(error.message);
+      if (error.code === "auth/network-request-failed") {
+        await signOut();
+      }
     }
   };
 

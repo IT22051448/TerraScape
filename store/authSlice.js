@@ -20,13 +20,13 @@ const authSlice = createSlice({
     clearAuth: (state) => {
       state.token = null;
       state.userData = null;
-      state.userData = payload.userData;
       state.didTryAutoLogin = false;
     },
   },
 });
 
 // Export both actions: authenticate and clearAuth
-export const { authenticate, clearAuth } = authSlice.actions;
+export const { authenticate, clearAuth, setDidTryAutoLogin } =
+  authSlice.actions;
 
 export default authSlice.reducer;

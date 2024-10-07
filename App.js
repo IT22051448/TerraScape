@@ -9,6 +9,8 @@ import ServiceProviderHome from "./Screens/ServiceProviderHome";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import { SettingsProvider } from "./Components/SettingsContext";
+import ScheduleService from "./Screens/Schedule/ScheduleService";
+import ServiceConfirmation from "./Screens/Schedule/ServiceConfirmation";
 
 const Stack = createStackNavigator();
 
@@ -21,6 +23,11 @@ const MainStack = () => (
       <Stack.Screen
         name="ServiceProviderHome"
         component={ServiceProviderHome}
+      />
+      <Stack.Screen name="ScheduleService" component={ScheduleService} />
+      <Stack.Screen
+        name="ServiceConfirmation"
+        component={ServiceConfirmation}
       />
     </Stack.Navigator>
   </Provider>

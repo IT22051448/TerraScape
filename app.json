@@ -16,7 +16,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/blck logo2.png",
+        "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#fff"
       }
     },
