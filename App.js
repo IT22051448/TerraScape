@@ -11,6 +11,7 @@ import { store } from "./store/store";
 import { SettingsProvider } from "./Components/SettingsContext";
 import ScheduleService from "./Screens/Schedule/ScheduleService";
 import ServiceConfirmation from "./Screens/Schedule/ServiceConfirmation";
+import ViewScheduledServices from "./Screens/Schedule/ViewScheduledServices";
 
 const Stack = createStackNavigator();
 
@@ -28,6 +29,10 @@ const MainStack = () => (
       <Stack.Screen
         name="ServiceConfirmation"
         component={ServiceConfirmation}
+      />
+      <Stack.Screen
+        name="ViewScheduledServices"
+        component={ViewScheduledServices}
       />
     </Stack.Navigator>
   </Provider>

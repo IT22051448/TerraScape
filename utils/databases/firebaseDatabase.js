@@ -6,6 +6,7 @@ import {
   query,
   orderByChild,
   equalTo,
+  remove,
 } from "firebase/database";
 import { getFirebaseApp } from "../firebaseHelper";
 
@@ -50,5 +51,60 @@ export const addService = async (serviceData) => {
   } catch (error) {
     console.error("Error adding service:", error);
     throw new Error("Error adding service: " + error.message);
+  }
+};
+
+export const getUserServices = async (email) => {
+  try {
+    const servicesRef = ref(dbRealtime, "services");
+    const servicesQuery = query(
+      servicesRef,
+      orderByChild("serviceProviderEmail"),
+      equalTo(email)
+    );
+
+    const snapshot = await get(servicesQuery);
+
+    if (snapshot.exists()) {
+      // Filter to only include services with newService: true
+      const services = snapshot.val();
+      const filteredServices = Object.entries(services)
+        .filter(([key, value]) => value.newService === true)
+        .reduce((acc, [key, value]) => {
+          acc[key] = value;
+          return acc;
+        }, {});
+
+      return filteredServices;
+    } else {
+      throw new Error("No services found for this user.");
+    }
+  } catch (error) {
+    console.error("Error fetching user services:", error);
+    throw error;
+  }
+};
+
+// Delete service
+export const deleteService = async (serviceId) => {
+  try {
+    const serviceRef = ref(dbRealtime, `services/${serviceId}`);
+    await remove(serviceRef);
+    console.log("Service deleted successfully.");
+  } catch (error) {
+    console.error("Error deleting service:", error);
+    throw new Error("Error deleting service: " + error.message);
+  }
+};
+
+// Update service
+export const updateService = async (serviceId, updatedData) => {
+  try {
+    const serviceRef = ref(dbRealtime, `services/${serviceId}`);
+    await set(serviceRef, updatedData);
+    console.log("Service updated successfully.");
+  } catch (error) {
+    console.error("Error updating service:", error);
+    throw new Error("Error updating service: " + error.message);
   }
 };
