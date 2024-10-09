@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import TabNavigation from "./App/Navigations/TabNavigation";
 import * as Location from "expo-location";
@@ -31,10 +31,20 @@ export default function App() {
   }
 
   return (
-    <UserLocation.Provider value={{location,setLocation}}>
-      <NavigationContainer>
-        <TabNavigation />
-      </NavigationContainer>
+    <UserLocation.Provider value={{ location, setLocation }}>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+        <NavigationContainer>
+          <TabNavigation />
+        </NavigationContainer>
+      </SafeAreaView>
     </UserLocation.Provider>
   );
 }
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#ffffff", // Adjust as needed
+  },
+});
