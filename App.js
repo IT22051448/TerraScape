@@ -9,6 +9,8 @@ import ServiceProviderHome from "./Screens/ServiceProviderHome";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import { SettingsProvider } from "./Components/SettingsContext";
+import ListingPage from './Screens/ServiceListing/ListingPage';
+import ListingForm from './Screens/ServiceListing/ListingForm';
 
 const Stack = createStackNavigator();
 
@@ -17,6 +19,8 @@ const MainStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="SignUp" component={SignUp} />
+      <Stack.Screen name="Listings" component={ListingPage} />
+      <Stack.Screen name="AddListing" component={ListingForm} />
       <Stack.Screen name="CustomerHome" component={CustomerHome} />
       <Stack.Screen
         name="ServiceProviderHome"

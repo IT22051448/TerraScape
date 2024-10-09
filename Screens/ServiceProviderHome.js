@@ -42,9 +42,9 @@ const ServiceProviderHome = () => {
       {/* Buttons - Manage Services and Go Back */}
       <TouchableOpacity
         style={styles.buttonPrimary}
-        onPress={() => navigation.navigate("ManageServices")}
+        onPress={() => navigation.navigate("ListingPage")}
       >
-        <Text style={styles.buttonText}>Manage Services</Text>
+        <Text style={styles.buttonText}>Manage Listings</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
