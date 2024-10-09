@@ -11,6 +11,8 @@ import { store } from "./store/store";
 import { SettingsProvider } from "./Components/SettingsContext";
 import ListingPage from './Screens/ServiceListing/ListingPage';
 import ListingForm from './Screens/ServiceListing/ListingForm';
+import CustomerServiceListings from './Screens/ServiceListing/CustomerServiceListings';
+
 
 const Stack = createStackNavigator();
 
@@ -26,6 +28,7 @@ const MainStack = () => (
         name="ServiceProviderHome"
         component={ServiceProviderHome}
       />
+      <Stack.Screen name="CustomerService" component={CustomerServiceListings} />
     </Stack.Navigator>
   </Provider>
 );
@@ -53,8 +56,11 @@ export default function App() {
       <StatusBar style="auto" />
       <NavigationContainer>
         <MainStack />
+        
+        
       </NavigationContainer>
     </SettingsProvider>
+    
   );
 }
 

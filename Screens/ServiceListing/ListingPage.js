@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, Button, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { setListings, deleteListing, setLoading, setError } from '../../store/listingsSlice'; // Update path if necessary
+import { setListings, deleteListing, setLoading, setError } from '../../store/listingsSlice';
 
 const ListingPage = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -9,7 +9,7 @@ const ListingPage = ({ navigation }) => {
   const isLoading = useSelector(state => state.listings.isLoading);
   const error = useSelector(state => state.listings.error);
 
-  // Fetch listings from the server (use your API)
+  // Fetch listings from the server
   useEffect(() => {
     const fetchListings = async () => {
       dispatch(setLoading());
@@ -27,10 +27,16 @@ const ListingPage = ({ navigation }) => {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`https://terrascape-36ce0-default-rtdb.asia-southeast1.firebasedatabase.app/listings/<listing_id>.json`, {
+      const response = await fetch(`https://terrascape-36ce0-default-rtdb.asia-southeast1.firebasedatabase.app/listings/${id}.json`, {
         method: 'DELETE',
       });
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        throw new Error(`Failed to delete the listing: ${errorMessage}`);
+      }
+
       dispatch(deleteListing(id));
+      Alert.alert('Success', 'Listing deleted successfully.');
     } catch (error) {
       Alert.alert('Error', 'Could not delete the listing.');
     }
@@ -50,28 +56,35 @@ const ListingPage = ({ navigation }) => {
 
   return (
     <View style={{ padding: 20 }}>
-      <Button
-        title="Add New Listing"
-        onPress={() => navigation.navigate('AddListing')}
-      />
-
       <FlatList
         data={listings}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={{ padding: 10, borderBottomWidth: 1, borderColor: '#ccc' }}>
-            <Text style={{ fontSize: 18 }}>{item.title}</Text>
-            <Text>{item.description}</Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('AddListing', { listing: item })}
-            >
-              <Text>Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleDelete(item.id)}>
-              <Text style={{ color: 'red' }}>Delete</Text>
-            </TouchableOpacity>
+          <View style={{ padding: 16, backgroundColor: 'white', borderRadius: 8, marginBottom: 16, elevation: 2 }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 8 }}>{item.title}</Text>
+            <Text style={{ marginBottom: 8 }}>{item.description}</Text>
+            <Text style={{ marginBottom: 8 }}>Price: ${item.servicePrice} USD</Text>
+            <Text style={{ marginBottom: 8 }}>Payment Type: {item.payType}</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <TouchableOpacity
+                style={{ padding: 10, backgroundColor: 'blue', borderRadius: 5, flex: 1, marginRight: 5 }}
+                onPress={() => navigation.navigate('AddListing', { listing: item })}
+              >
+                <Text style={{ color: 'white', textAlign: 'center' }}>Edit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{ padding: 10, backgroundColor: 'red', borderRadius: 5, flex: 1 }}
+                onPress={() => handleDelete(item.id)}
+              >
+                <Text style={{ color: 'white', textAlign: 'center' }}>Delete</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
+      />
+      <Button
+        title="Add New Listing"
+        onPress={() => navigation.navigate('AddListing')}
       />
     </View>
   );

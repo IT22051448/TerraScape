@@ -1,71 +1,171 @@
-import React, { useState, useEffect } from 'react';
-import { View, TextInput, Button, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, TextInput, Alert, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { addListing, updateListing } from '../../store/listingsSlice'; // Update path if necessary
+import { addListing, updateListing } from '../../store/listingsSlice';
+import { db } from '../../utils/firebaseHelper'; // Import the db instance
+import { ref, set, push } from "firebase/database";
+import { Picker } from '@react-native-picker/picker';
 
 const ListingForm = ({ route, navigation }) => {
   const dispatch = useDispatch();
-  const { listing } = route.params || {}; // Gets listing if it's in edit mode
+  const { listing } = route.params || {};
   const [title, setTitle] = useState(listing ? listing.title : '');
   const [description, setDescription] = useState(listing ? listing.description : '');
+  const [servicePrice, setServicePrice] = useState(listing ? listing.servicePrice : '');
+  const [payType, setPayType] = useState(listing ? listing.payType : '');
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const handleSubmit = async () => {
-    if (title === '' || description === '') {
-      Alert.alert('Error', 'All fields are required.');
+    if (title === '' || description === '' || servicePrice === '' || !termsAccepted) {
+      Alert.alert('Error', 'All fields are required and terms must be accepted.');
       return;
     }
 
-    const newListing = { title, description };
+    const newListing = { title, description, servicePrice, payType };
 
     try {
       if (listing) {
         // Editing existing listing
-        await fetch(`https://terrascape-36ce0-default-rtdb.asia-southeast1.firebasedatabase.app/listings/<listing_id>.json`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newListing),
-        });
+        const listingRef = ref(db, `listings/${listing.id}`);
+        await set(listingRef, newListing);
         dispatch(updateListing({ ...newListing, id: listing.id }));
       } else {
         // Adding new listing
-        const response = await fetch('https://terrascape-36ce0-default-rtdb.asia-southeast1.firebasedatabase.app/listings.json', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newListing),
-        });
-        const data = await response.json();
-        dispatch(addListing(data));
+        const newListingRef = ref(db, 'listings');
+        const newListingKey = push(newListingRef).key;
+
+        await set(ref(db, `listings/${newListingKey}`), newListing);
+        dispatch(addListing({ ...newListing, id: newListingKey }));
       }
       navigation.goBack();
     } catch (error) {
+      console.error("Error saving listing:", error);
       Alert.alert('Error', 'Could not save the listing.');
     }
   };
 
   return (
-    <View style={{ padding: 20 }}>
+    <View style={styles.container}>
+      <Text style={styles.label}>Edit service Listing</Text>
       <TextInput
         value={title}
         onChangeText={setTitle}
         placeholder="Listing Title"
-        style={{ borderBottomWidth: 1, marginBottom: 20 }}
+        style={styles.input}
       />
       <TextInput
         value={description}
         onChangeText={setDescription}
         placeholder="Listing Description"
-        style={{ borderBottomWidth: 1, marginBottom: 20 }}
+        style={styles.input}
       />
-      <Button
-        title={listing ? 'Update Listing' : 'Add Listing'}
-        onPress={handleSubmit}
-      />
+      <View style={styles.priceContainer}>
+        <Text style={styles.priceSymbol}>$</Text>
+        <TextInput
+          value={servicePrice}
+          onChangeText={setServicePrice}
+          placeholder="Service Price"
+          keyboardType="numeric"
+          style={styles.priceInput}
+        />
+      </View>
+      <Text style={styles.label}>Payment Type</Text>
+      <Picker
+        selectedValue={payType}
+        style={styles.picker}
+        onValueChange={(itemValue) => setPayType(itemValue)}
+      >
+        <Picker.Item label="Per hour" value="Per hour" />
+        <Picker.Item label="Per service" value="Per service" />
+      </Picker>
+      <View style={styles.termsContainer}>
+        <TouchableOpacity
+          style={styles.checkboxContainer}
+          onPress={() => setTermsAccepted(!termsAccepted)}
+        >
+          <Text style={termsAccepted ? styles.checkboxChecked : styles.checkboxUnchecked}>☑</Text>
+          <Text style={styles.termsText}>I agree with the terms and conditions</Text>
+        </TouchableOpacity>
+      </View>
+      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <Text style={styles.buttonText}>{listing ? 'Update Listing' : 'Add Listing'}</Text>
+      </TouchableOpacity>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+  },
+  input: {
+    borderWidth: 2,
+    borderColor: '#ccc', // Optional: color of the border
+    marginBottom: 20,
+    padding: 10,
+    borderRadius: 10, // Rounded corners
+  },
+  priceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: '#ccc', // Optional: color of the border
+    borderRadius: 10,
+  },
+  priceSymbol: {
+    fontSize: 18,
+    marginRight: 5,
+    position: 'absolute',
+    left: 10,
+  },
+  priceInput: {
+    padding: 10,
+    flex: 1,
+    paddingLeft: 30,
+    borderRadius: 10, // Rounded corners
+  },
+  label: {
+    marginBottom: 10,
+    fontWeight: 'bold',
+  },
+  picker: {
+    height: 50,
+    width: '100%',
+    marginBottom: 20,
+    borderRadius: 10, // Rounded corners
+  },
+  termsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checkboxChecked: {
+    fontSize: 18,
+    marginRight: 10,
+  },
+  checkboxUnchecked: {
+    fontSize: 18,
+    marginRight: 10,
+    opacity: 0.5,
+  },
+  termsText: {
+    fontSize: 14,
+  },
+  button: {
+    backgroundColor: '#007bff',
+    padding: 15,
+    borderRadius: 10, // Rounded corners for the button
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+});
 
 export default ListingForm;

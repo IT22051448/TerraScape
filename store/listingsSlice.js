@@ -10,7 +10,11 @@ const listingsSlice = createSlice({
   reducers: {
     // Set all listings when fetched from the server
     setListings: (state, action) => {
-      state.listings = action.payload;
+      // Convert fetched data into an array if it's an object
+      state.listings = Array.isArray(action.payload) ? action.payload : Object.keys(action.payload).map(key => ({
+        ...action.payload[key],
+        id: key, // Assign the key as the id
+      }));
       state.isLoading = false;
       state.error = null;
     },

@@ -15,6 +15,10 @@ const CustomerHome = () => {
         title="Go Back to Sign In"
         onPress={() => navigation.navigate("SignIn")}
       />
+      <Button
+        title="Service Listings"
+        onPress={() => navigation.navigate("CustomerService")}
+      />
     </View>
   );
 };
