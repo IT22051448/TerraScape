@@ -12,6 +12,8 @@ import { SettingsProvider } from "./Components/SettingsContext";
 import ScheduleService from "./Screens/Schedule/ScheduleService";
 import ServiceConfirmation from "./Screens/Schedule/ServiceConfirmation";
 import ViewScheduledServices from "./Screens/Schedule/ViewScheduledServices";
+import MakeAppointment from "./Screens/Appointment/MakeAppointment";
+import RequestedAppointments from "./Screens/Appointment/RequestedAppointment";
 
 const Stack = createStackNavigator();
 
@@ -33,6 +35,11 @@ const MainStack = () => (
       <Stack.Screen
         name="ViewScheduledServices"
         component={ViewScheduledServices}
+      />
+      <Stack.Screen name="MakeAppointment" component={MakeAppointment} />
+      <Stack.Screen
+        name="RequestedAppointments"
+        component={RequestedAppointments}
       />
     </Stack.Navigator>
   </Provider>

@@ -12,14 +12,14 @@ import {
   getUserServices,
   deleteService,
 } from "../../utils/databases/firebaseDatabase";
-import EditService from "../../Components/EditService"; // Import the EditService component
+import EditService from "../../Components/EditService";
 
 const ViewScheduledServices = () => {
   const { userData } = useSelector((state) => state.auth);
   const serviceProviderEmail = userData?.email;
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editingService, setEditingService] = useState(null); // State for the service being edited
+  const [editingService, setEditingService] = useState(null);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -103,7 +103,13 @@ const ViewScheduledServices = () => {
         keyExtractor={(item) => item[0]} // Using service ID as key
         renderItem={renderService}
       />
-      {editingService && <EditService />}
+      {editingService && (
+        <EditService
+          serviceId={editingService.id}
+          initialData={editingService.data}
+          onClose={closeEdit}
+        />
+      )}
     </View>
   );
 };

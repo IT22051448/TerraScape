@@ -113,8 +113,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profileImage: {
-    width: 70,
-    height: 70,
+    width: 60,
+    height: 60,
     borderRadius: 35,
     borderWidth: 2,
     borderColor: "#fff",
@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginTop: 30,
     marginBottom: 20,
+    marginRight: 25,
     textAlign: "center",
     textShadowColor: "#000",
     textShadowOffset: { width: 1, height: 1 },

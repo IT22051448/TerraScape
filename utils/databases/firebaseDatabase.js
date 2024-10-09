@@ -108,3 +108,20 @@ export const updateService = async (serviceId, updatedData) => {
     throw new Error("Error updating service: " + error.message);
   }
 };
+
+export const getAllServices = async () => {
+  try {
+    const servicesRef = ref(dbRealtime, "services");
+    const snapshot = await get(servicesRef);
+
+    if (snapshot.exists()) {
+      const services = snapshot.val();
+      return services;
+    } else {
+      throw new Error("No services found.");
+    }
+  } catch (error) {
+    console.error("Error fetching services:", error);
+    throw error;
+  }
+};
