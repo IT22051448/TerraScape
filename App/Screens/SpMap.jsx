@@ -1,7 +1,9 @@
+//initail page  similar to home for service provider
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Map from "./map";
 import Header from "./header";
+import Searchbar from "./seachbar";
 
 const SpMap = () => {
   return (
@@ -9,6 +11,7 @@ const SpMap = () => {
 
     <View style={styles.headerContainer}>
       <Header />
+      <Searchbar />
     </View>
       
       <Map />
