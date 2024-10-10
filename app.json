@@ -18,7 +18,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/blck logo2.png",
         "backgroundColor": "#fff"
-      }
+      },
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/images/logo.png"

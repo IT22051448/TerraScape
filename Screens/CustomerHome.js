@@ -11,10 +11,7 @@ const CustomerHome = () => {
       <Text style={styles.subtitle}>
         Here you can find translation services and more.
       </Text>
-      <Button
-        title="Go Back to Sign In"
-        onPress={() => navigation.navigate("SignIn")}
-      />
+      
       <Button
         title="Service Listings"
         onPress={() => navigation.navigate("CustomerService")}

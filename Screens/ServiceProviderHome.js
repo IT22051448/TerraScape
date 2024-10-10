@@ -12,7 +12,9 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 const ServiceProviderHome = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { fullName } = route.params;
+
+  // Use optional chaining or default value for fullName
+  const { fullName = "Service Provider" } = route.params || {};
 
   return (
     <ImageBackground

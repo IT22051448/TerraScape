@@ -61,6 +61,7 @@ const SignIn = () => {
       const email = formState.inputValues.email;
       const userFromDb = await getUserByEmail(email);
       const userData = Object.values(userFromDb)[0];
+      
 
       const userDataToStore = {
         token: result.userData.token,
@@ -83,7 +84,7 @@ const SignIn = () => {
           fullName: userData.fullName,
         });
       } else {
-        navigation.navigate("CustomerHome");
+        navigation.navigate("Main");
       }
     } catch (error) {
       console.log(error);

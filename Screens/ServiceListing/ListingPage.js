@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, Button, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setListings, deleteListing, setLoading, setError } from '../../store/listingsSlice';
 
@@ -42,6 +42,19 @@ const ListingPage = ({ navigation }) => {
     }
   };
 
+  // Function to confirm deletion
+  const confirmDelete = (id) => {
+    Alert.alert(
+      'Confirm Delete',
+      'Are you sure you want to delete this listing?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'OK', onPress: () => handleDelete(id) }
+      ],
+      { cancelable: true }
+    );
+  };
+
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
   }
@@ -55,26 +68,28 @@ const ListingPage = ({ navigation }) => {
   }
 
   return (
-    <View style={{ padding: 20 }}>
+    <View style={{ flex: 1, padding: 20 }}>
       <FlatList
         data={listings}
         keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={{ paddingBottom: 80 }} // Adjust this value to create space for the button
         renderItem={({ item }) => (
           <View style={{ padding: 16, backgroundColor: 'white', borderRadius: 8, marginBottom: 16, elevation: 2 }}>
             <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 8 }}>{item.title}</Text>
+            <Text style={{ marginBottom: 8 }}>Category: {item.category}</Text>
             <Text style={{ marginBottom: 8 }}>{item.description}</Text>
             <Text style={{ marginBottom: 8 }}>Price: ${item.servicePrice} USD</Text>
             <Text style={{ marginBottom: 8 }}>Payment Type: {item.payType}</Text>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <TouchableOpacity
-                style={{ padding: 10, backgroundColor: 'blue', borderRadius: 5, flex: 1, marginRight: 5 }}
+                style={{ padding: 10, backgroundColor: '#5B8E55', borderRadius: 5, flex: 1, marginRight: 5 }}
                 onPress={() => navigation.navigate('AddListing', { listing: item })}
               >
                 <Text style={{ color: 'white', textAlign: 'center' }}>Edit</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={{ padding: 10, backgroundColor: 'red', borderRadius: 5, flex: 1 }}
-                onPress={() => handleDelete(item.id)}
+                onPress={() => confirmDelete(item.id)} // Call the confirmDelete function
               >
                 <Text style={{ color: 'white', textAlign: 'center' }}>Delete</Text>
               </TouchableOpacity>
@@ -82,10 +97,13 @@ const ListingPage = ({ navigation }) => {
           </View>
         )}
       />
-      <Button
-        title="Add New Listing"
-        onPress={() => navigation.navigate('AddListing')}
-      />
+      
+      <TouchableOpacity
+        style={{ padding: 10, backgroundColor: '#5B8E55', borderRadius: 5, position: 'absolute', bottom: 20, left: 20, right: 20 }}
+        onPress={() => navigation.navigate('AddListing')} // Call the confirmDelete function
+      >
+        <Text style={{ color: 'white', textAlign: 'center' }}>Add New Listing</Text>
+      </TouchableOpacity>
     </View>
   );
 };

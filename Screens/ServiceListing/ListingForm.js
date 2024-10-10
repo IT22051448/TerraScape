@@ -13,15 +13,16 @@ const ListingForm = ({ route, navigation }) => {
   const [description, setDescription] = useState(listing ? listing.description : '');
   const [servicePrice, setServicePrice] = useState(listing ? listing.servicePrice : '');
   const [payType, setPayType] = useState(listing ? listing.payType : '');
+  const [category, setCategory] = useState(listing ? listing.category : ''); // New state for category
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   const handleSubmit = async () => {
-    if (title === '' || description === '' || servicePrice === '' || !termsAccepted) {
+    if (title === '' || description === '' || servicePrice === '' || !category || !termsAccepted) {
       Alert.alert('Error', 'All fields are required and terms must be accepted.');
       return;
     }
 
-    const newListing = { title, description, servicePrice, payType };
+    const newListing = { title, description, servicePrice, payType, category }; // Include category in listing
 
     try {
       if (listing) {
@@ -46,7 +47,7 @@ const ListingForm = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Edit service Listing</Text>
+      <Text style={styles.label}>{listing ? 'Update Service Listing' : 'Add Service Listing'}</Text>
       <TextInput
         value={title}
         onChangeText={setTitle}
@@ -69,6 +70,21 @@ const ListingForm = ({ route, navigation }) => {
           style={styles.priceInput}
         />
       </View>
+      
+      {/* Category Dropdown */}
+      <Text style={styles.label}>Category</Text>
+      <Picker
+        selectedValue={category}
+        style={styles.picker}
+        onValueChange={(itemValue) => setCategory(itemValue)}
+      >
+        <Picker.Item label="Select a Category" value="" />
+        <Picker.Item label="Garden Design" value="Garden Design" />
+        <Picker.Item label="Lawn Care" value="Lawn Care" />
+        <Picker.Item label="Hardscaping" value="Hardscaping" />
+        <Picker.Item label="Water Services" value="Water Services" />
+      </Picker>
+
       <Text style={styles.label}>Payment Type</Text>
       <Picker
         selectedValue={payType}

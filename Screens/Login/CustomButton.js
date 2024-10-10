@@ -14,6 +14,7 @@ const CustomButton = (props) => {
       style={{
         ...styles.btn,
         ...props.style,
+        backgroundColor: props.backgroundColor || "#5B8E55", // Use prop or default color
         borderColor: props.borderColor || "black", // Dynamic border color
       }}
       onPress={props.onPress}
@@ -24,7 +25,7 @@ const CustomButton = (props) => {
         <Text
           style={{
             fontSize: 15,
-            color: props.textColor || "black",
+            color: props.textColor || "white",
             fontWeight: "bold",
           }}
         >
