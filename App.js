@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import TabNavigation from "./App/Navigations/TabNavigation";
+import TabNavigation from "./App/Navigations/TabNavigation"; // Adjust the path as needed
 import * as Location from "expo-location"; // Use expo-location for location access
-import UserLocation from "./App/context/userLocation";
-import "react-native-get-random-values";
+import UserLocation from "./App/context/userLocation"; // Context for user location
+import "react-native-get-random-values"; // Needed for generating random values
 
 export default function App() {
   const [location, setLocation] = useState(null);
@@ -51,13 +51,6 @@ export default function App() {
       });
     };
   }, []);
-
-  let text = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
 
   return (
     <UserLocation.Provider value={{ location, setLocation }}>
