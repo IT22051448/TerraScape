@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  TextInput,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
@@ -19,6 +20,7 @@ import {
 const MakeAppointment = () => {
   const navigation = useNavigation();
   const [services, setServices] = useState([]);
+  const [address, setAddress] = useState(""); // State for user address input
 
   // Get user data from Redux store
   const { userData } = useSelector((state) => state.auth);
@@ -29,10 +31,9 @@ const MakeAppointment = () => {
     const fetchServices = async () => {
       try {
         const allServices = await getAllServices();
-        // Assuming each service has a unique ID (e.g., the key from Firebase)
         const availableServices = Object.entries(allServices)
           .filter(([key, service]) => service.newService === true)
-          .map(([key, service]) => ({ ...service, id: key })); // Add the key as id
+          .map(([key, service]) => ({ ...service, id: key }));
 
         setServices(availableServices);
       } catch (error) {
@@ -44,9 +45,13 @@ const MakeAppointment = () => {
   }, []);
 
   const handleMakeAppointment = async (service) => {
+    if (!address) {
+      Alert.alert("Error", "Please enter your address.");
+      return;
+    }
+
     console.log("Selected service:", service);
 
-    // Prepare appointment data
     const appointmentData = {
       sid: service.sid,
       serviceType: service.serviceType,
@@ -60,25 +65,15 @@ const MakeAppointment = () => {
       customerName: customerName,
       status: "Pending",
       createdAt: Date.now(),
+      location: address, // Use the user's address
     };
 
     try {
-      // Request the appointment
       await requestAppointment(appointmentData);
-
-      // Attempt to update the service
-      console.log(
-        `Attempting to update service ${service.id} to newService: false`
-      );
       await updateServiceNewFlag(service.id, false);
-
-      // Fetch updated services after the update
       const updatedServices = await getAllServices();
-      console.log("Updated services:", updatedServices);
-      const updatedService = updatedServices[service.id]; // Access the specific service by ID
-      console.log("After update, service data:", updatedService);
+      const updatedService = updatedServices[service.id];
 
-      // Check if the update was successful
       if (updatedService && updatedService.newService === false) {
         Alert.alert(
           "Appointment Created",
@@ -87,9 +82,6 @@ const MakeAppointment = () => {
       } else {
         Alert.alert("Error", "Failed to update service. Please try again.");
       }
-
-      // Navigate back after creating the appointment
-      navigation.goBack();
     } catch (error) {
       console.error("Error creating appointment:", error);
       Alert.alert("Error", "Failed to create appointment: " + error.message);
@@ -131,6 +123,15 @@ const MakeAppointment = () => {
       >
         <Text style={styles.backButtonText}>{"< back"}</Text>
       </TouchableOpacity>
+
+      {/* Input for user's address */}
+      <TextInput
+        style={styles.input}
+        placeholder="Enter your address"
+        value={address}
+        onChangeText={(text) => setAddress(text)}
+      />
+
       <FlatList
         data={services}
         renderItem={renderServiceItem}
@@ -162,6 +163,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
     color: "#2c3e50",
+  },
+  input: {
+    height: 40,
+    borderColor: "#34495e",
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    borderRadius: 5,
   },
   card: {
     backgroundColor: "#ffffff",
@@ -224,7 +233,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   noImageText: {
-    color: "#ff0000", // or any color you prefer
+    color: "#ff0000",
     textAlign: "center",
     marginTop: 10,
     marginBottom: 10,
