@@ -11,28 +11,24 @@ const CustomerServiceListings = ({ navigation }) => {
   const isLoading = useSelector(state => state.listings.isLoading);
   const error = useSelector(state => state.listings.error);
 
-  // State for search query, filtered listings, and sort option
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredListings, setFilteredListings] = useState([]);
   const [sortOption, setSortOption] = useState('none'); // State for sorting
 
-  // Animated value for sidebar width
   const sidebarWidth = useRef(new Animated.Value(0)).current;
 
-  // Function to open the sidebar
   const openSidebar = () => {
     Animated.timing(sidebarWidth, {
-      toValue: 250, // Width of the sidebar
+      toValue: 250,
       duration: 300,
       easing: Easing.ease,
       useNativeDriver: false,
     }).start();
   };
 
-  // Function to close the sidebar
   const closeSidebar = () => {
     Animated.timing(sidebarWidth, {
-      toValue: 0, // Collapse the sidebar
+      toValue: 0,
       duration: 300,
       easing: Easing.ease,
       useNativeDriver: false,
@@ -55,20 +51,20 @@ const CustomerServiceListings = ({ navigation }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    // Filter the listings based on the search query
     let updatedListings = listings.filter(item =>
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    // Apply sorting based on the selected sort option
-    if (sortOption === 'priceLowToHigh') {
+     // Apply sorting based on the selected sort option
+     if (sortOption === 'priceLowToHigh') {
       updatedListings = updatedListings.sort((a, b) => parseFloat(a.servicePrice) - parseFloat(b.servicePrice));
     } else if (sortOption === 'priceHighToLow') {
       updatedListings = updatedListings.sort((a, b) => parseFloat(b.servicePrice) - parseFloat(a.servicePrice));
     } else if (sortOption === 'alphabetical') {
       updatedListings = updatedListings.sort((a, b) => a.title.localeCompare(b.title));
     }
+
 
     setFilteredListings(updatedListings);
   }, [searchQuery, listings, sortOption]);
@@ -79,7 +75,6 @@ const CustomerServiceListings = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Sidebar: Animated View */}
       <Animated.View style={[styles.sidebar, { width: sidebarWidth }]}>
         <TouchableOpacity onPress={closeSidebar} style={styles.closeButton}>
           <Icon name="x" size={30} color="#fff" />
@@ -98,9 +93,7 @@ const CustomerServiceListings = ({ navigation }) => {
         </Picker>
       </Animated.View>
 
-      {/* Main Content */}
       <View style={{ flex: 1, padding: 20 }}>
-        {/* Profile Section */}
         <View style={styles.profileSection}>
           <Image
             accessibilityLabel="Profile image"
@@ -116,7 +109,6 @@ const CustomerServiceListings = ({ navigation }) => {
           </TouchableOpacity>
         </View>
 
-        {/* Search Bar */}
         <TextInput
           style={styles.searchBar}
           placeholder="Search services..."
@@ -124,14 +116,12 @@ const CustomerServiceListings = ({ navigation }) => {
           onChangeText={text => setSearchQuery(text)}
         />
 
-        {/* Listings */}
         <FlatList
           data={filteredListings}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.cardWrapper}>
               <View style={styles.cardContainer}>
-                {/* Image Section */}
                 <View style={styles.imageContainer}>
                   <Image
                     source={{
@@ -142,9 +132,9 @@ const CustomerServiceListings = ({ navigation }) => {
                   />
                 </View>
 
-                {/* Content Section */}
                 <View style={styles.cardContent}>
                   <Text style={styles.titleText}>{item.title}</Text>
+                  <Text style={styles.descriptionText}>{item.category}</Text>
                   <Text style={styles.descriptionText}>{item.description}</Text>
                   <Text style={styles.priceText}>Price: ${item.servicePrice} / {item.payType}</Text>
 
@@ -172,7 +162,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: '#333',
     zIndex: 2,
-    paddingTop: 50, // Adjust to your needs
+    paddingTop: 50,
   },
   closeButton: {
     padding: 10,
@@ -218,47 +208,45 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: '#fff',
     elevation: 4,
-    height: 150, // Fixed height for the card
-    width: '100%', // Full width
+    width: '100%',
   },
   cardContainer: {
     flexDirection: 'row',
     borderRadius: 16,
     overflow: 'hidden',
-    height: '100%', // Occupies full height of the card
   },
   imageContainer: {
-    width: '30%', // 30% of the card width
-    height: '100%', // Full height of the card
+    width: '30%',
+    height: 150, // Maintain height for image
     overflow: 'hidden',
   },
   image: {
-    width: '100%', // Full width of the image container
-    height: '100%', // Full height of the image container
-    resizeMode: 'cover', // Cover the container while maintaining aspect ratio
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   cardContent: {
     flex: 1,
     padding: 16,
+    justifyContent: 'space-between', // Adjust layout
   },
   titleText: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 0,
   },
   descriptionText: {
     fontSize: 14,
-    marginBottom: 8,
+    marginBottom: 0,
     color: '#4A5568',
   },
   priceText: {
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 8,
     color: '#2D3748',
   },
   button: {
     paddingVertical: 10,
-    paddingHorizontal: 0,
     backgroundColor: '#007BFF',
     borderRadius: 8,
   },
@@ -279,4 +267,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomerServiceListings; 
+export default CustomerServiceListings;
