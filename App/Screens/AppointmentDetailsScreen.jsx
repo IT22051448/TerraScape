@@ -1,13 +1,6 @@
 // App/Components/AppointmentDetails.js
 import React from "react";
-import {
-  View,
-  Text,
-  Image,
-  Button,
-  StyleSheet,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 
 const AppointmentDetails = ({ route, navigation }) => {
   const { appointment } = route.params;
@@ -21,7 +14,7 @@ const AppointmentDetails = ({ route, navigation }) => {
   };
 
   const handleStartJob = () => {
-    // Implement start job logic
+    navigation.navigate("JobDashboard", { appointment }); // Pass appointment details
   };
 
   return (
