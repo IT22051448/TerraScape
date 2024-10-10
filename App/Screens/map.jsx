@@ -1,8 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Image } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import UserLocationContext from "../context/userLocation";
-import useAppointments from "../utils/fetchAppointments"; // Import the fetchAppointments hook
+import useAppointments from "../utils/fetchAppointments";
 
 export default function Map() {
   const { location } = useContext(UserLocationContext); // Get user location from context
@@ -74,7 +74,11 @@ export default function Map() {
             longitude: location.longitude,
           }}
           title="You are here"
-        />
+        >
+          <Image
+            source={require("/Users/dulakshasiriwardana/Documents/GitHub/TerraScape/assets/man.png")}
+          />
+        </Marker>
 
         {/* Add markers for each appointment */}
         {appointments.map((appointment) => {
@@ -89,7 +93,7 @@ export default function Map() {
                   latitude,
                   longitude,
                 }}
-                title={`Appointment ID: ${appointment.id}`}
+                title={`Task: ${appointment.title} - Date: ${appointment.date}`}
               />
             );
           } else {

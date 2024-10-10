@@ -10,7 +10,6 @@ export default function App() {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
-
   useEffect(() => {
     const getLocation = async () => {
       // Request permission to access location
@@ -66,7 +65,6 @@ export default function App() {
         <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
         <NavigationContainer>
           <TabNavigation />
-         
         </NavigationContainer>
       </SafeAreaView>
     </UserLocation.Provider>
