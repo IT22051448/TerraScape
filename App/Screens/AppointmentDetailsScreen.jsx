@@ -1,4 +1,3 @@
-// App/Components/AppointmentDetails.js
 import React from "react";
 import {
   View,
@@ -7,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  Linking,
 } from "react-native";
 import { db } from "../utils/firebaseConfig"; // Make sure to import your firebase config
 import { doc, deleteDoc } from "firebase/firestore"; // Import deleteDoc
@@ -44,7 +44,23 @@ const AppointmentDetails = ({ route, navigation }) => {
   };
 
   const handleNavigate = () => {
-    // Implement navigation logic
+    const latitude = appointment.latitude;
+    const longitude = appointment.longitude;
+
+    const url = `geo:${latitude},${longitude}?q=${latitude},${longitude}`;
+
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (!supported) {
+          Alert.alert(
+            "Error",
+            "Google Maps is not available. Please make sure it is installed."
+          );
+        } else {
+          return Linking.openURL(url);
+        }
+      })
+      .catch((err) => console.error("An error occurred", err));
   };
 
   const handleStartJob = () => {
