@@ -1,6 +1,23 @@
 // App/Components/JobDashboard.js
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { db } from "../utils/firebaseConfig";
+import { doc, updateDoc } from "firebase/firestore";
+
+// Function to update appointment status
+const updateAppointmentStatus = async (appointmentId, newStatus) => {
+  try {
+    // Reference to the appointment document
+    const appointmentDoc = doc(db, "appointments", appointmentId);
+
+    // Update the status field of the appointment
+    await updateDoc(appointmentDoc, { status: newStatus });
+
+    console.log("Appointment status updated successfully!");
+  } catch (error) {
+    console.error("Error updating appointment status: ", error);
+  }
+};
 
 const JobDashboard = ({ route }) => {
   const { appointment } = route.params; // Receive appointment details
@@ -27,10 +44,47 @@ const JobDashboard = ({ route }) => {
     setIsRunning(false);
   };
 
+  const formatTime = (totalSeconds) => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+      2,
+      "0"
+    )}:${String(seconds).padStart(2, "0")}`;
+  };
+
+  const completeTask = () => {
+    Alert.alert(
+      "Confirm Completion",
+      "Are you sure you want to complete this task?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            // Update the appointment status to "Done"
+            await updateAppointmentStatus(appointment.id, "Done");
+            // Show a completion alert
+            Alert.alert(
+              "Job Completed!",
+              "The appointment status has been updated to Done."
+            );
+          },
+        },
+      ],
+      { cancelable: false } // Prevent dismissing the alert by tapping outside
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Job Dashboard</Text>
-      <Text style={styles.timer}>{timer} seconds</Text>
+      <Text style={styles.timer}>{formatTime(timer)}</Text>
 
       {/* Displaying appointment details */}
       <Text style={styles.appointmentTitle}>{appointment.title}</Text>
@@ -48,6 +102,14 @@ const JobDashboard = ({ route }) => {
           <Text style={styles.buttonText}>Finish</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Complete Task Button */}
+      <TouchableOpacity
+        style={styles.completeTaskButton}
+        onPress={completeTask}
+      >
+        <Text style={styles.buttonText}>Complete Task</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -111,6 +173,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
     marginLeft: 5,
+  },
+  completeTaskButton: {
+    backgroundColor: "#007BFF",
+    borderRadius: 25,
+    padding: 15,
+    marginVertical: 5,
+    alignItems: "center",
+    width: "100%",
   },
   buttonText: {
     color: "#fff",

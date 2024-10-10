@@ -1,12 +1,46 @@
 // App/Components/AppointmentDetails.js
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
+import { db } from "../utils/firebaseConfig"; // Make sure to import your firebase config
+import { doc, deleteDoc } from "firebase/firestore"; // Import deleteDoc
 
 const AppointmentDetails = ({ route, navigation }) => {
   const { appointment } = route.params;
 
-  const handleDelete = () => {
-    console.log(`Deleting appointment: ${appointment.id}`);
+  const handleDelete = async () => {
+    // Show confirmation alert
+    Alert.alert(
+      "Confirm Deletion",
+      "Are you sure you want to reject this appointment?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            try {
+              const appointmentDoc = doc(db, "appointments", appointment.id);
+              await deleteDoc(appointmentDoc); // Delete the appointment document
+              console.log(`Deleted appointment: ${appointment.id}`);
+              // Optionally, navigate back or show a success message
+              navigation.goBack(); // Navigate back after deletion
+            } catch (error) {
+              console.error("Error deleting appointment: ", error);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   const handleNavigate = () => {
