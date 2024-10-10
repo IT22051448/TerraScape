@@ -14,7 +14,7 @@ import {
 } from "../../utils/databases/firebaseDatabase";
 import EditService from "../../Components/EditService";
 
-const ViewScheduledServices = () => {
+const ViewScheduledServices = ({ navigation }) => {
   const { userData } = useSelector((state) => state.auth);
   const serviceProviderEmail = userData?.email;
   const [services, setServices] = useState([]);
@@ -52,14 +52,16 @@ const ViewScheduledServices = () => {
   const renderService = ({ item }) => (
     <View style={styles.serviceCard}>
       <Text style={styles.serviceTitle}>{item[1].serviceType}</Text>
-      <Text>{item[1].description}</Text>
-      <Text>Amount: {item[1].amount}</Text>
-      <Text>Date: {item[1].date}</Text>
-      <Text>Time: {item[1].time}</Text>
+      <Text style={styles.serviceDescription}>{item[1].description}</Text>
+      <View style={styles.detailsContainer}>
+        <Text style={styles.detailsText}>Amount: {item[1].amount}</Text>
+        <Text style={styles.detailsText}>Date: {item[1].date}</Text>
+        <Text style={styles.detailsText}>Time: {item[1].time}</Text>
+      </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.editButton}
-          onPress={() => setEditingService({ id: item[0], data: item[1] })} // Set the service for editing
+          onPress={() => setEditingService({ id: item[0], data: item[1] })}
         >
           <Text style={styles.buttonText}>Edit</Text>
         </TouchableOpacity>
@@ -98,10 +100,18 @@ const ViewScheduledServices = () => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={styles.backButtonText}>{"< Back"}</Text>
+      </TouchableOpacity>
+      <Text style={styles.heading}>Your Scheduled Services</Text>
       <FlatList
         data={Object.entries(services)}
         keyExtractor={(item) => item[0]} // Using service ID as key
         renderItem={renderService}
+        showsVerticalScrollIndicator={false}
       />
       {editingService && (
         <EditService
@@ -120,21 +130,55 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f8ff",
     flex: 1,
   },
+  backButton: {
+    marginBottom: 20,
+  },
+  backButtonText: {
+    fontSize: 16,
+    color: "#2980b9",
+    fontWeight: "bold",
+  },
+  heading: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#34495e",
+    marginBottom: 20,
+    textAlign: "center",
+  },
   serviceCard: {
     backgroundColor: "#ffffff",
     padding: 15,
-    borderRadius: 5,
-    marginBottom: 10,
-    elevation: 2,
+    borderRadius: 10,
+    marginBottom: 15,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   serviceTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
+    marginBottom: 5,
+  },
+  serviceDescription: {
+    fontSize: 16,
+    color: "#555",
+    marginBottom: 10,
+  },
+  detailsContainer: {
+    marginBottom: 10,
+  },
+  detailsText: {
+    fontSize: 14,
+    color: "#666",
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
   },
   editButton: {
     backgroundColor: "#4caf50",

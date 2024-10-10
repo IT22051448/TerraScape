@@ -125,3 +125,23 @@ export const getAllServices = async () => {
     throw error;
   }
 };
+
+export const getServiceBySid = async (sid) => {
+  try {
+    const servicesRef = ref(dbRealtime, "services");
+    const servicesQuery = query(servicesRef, orderByChild("sid"), equalTo(sid));
+    const snapshot = await get(servicesQuery);
+
+    if (snapshot.exists()) {
+      const services = snapshot.val();
+      // Since sid is expected to be unique, we can return the first matched service
+      const serviceKey = Object.keys(services)[0]; // Get the first key
+      return { id: serviceKey, ...services[serviceKey] }; // Return the service object along with its ID
+    } else {
+      throw new Error("No service found with the provided SID.");
+    }
+  } catch (error) {
+    console.error("Error fetching service by SID:", error);
+    throw error;
+  }
+};

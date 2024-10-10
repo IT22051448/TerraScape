@@ -15,6 +15,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { addService } from "../../utils/databases/firebaseDatabase";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import uuid from "react-native-uuid";
 
 const ScheduleService = () => {
   const [images, setImages] = useState([]);
@@ -84,6 +85,7 @@ const ScheduleService = () => {
     }
 
     const serviceData = {
+      sid: uuid.v4(),
       images,
       serviceType,
       description,
@@ -118,7 +120,7 @@ const ScheduleService = () => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backButton}>{"<"}</Text>
+          <Text style={styles.backButton}>{"< Back"}</Text>
         </TouchableOpacity>
         <Text style={styles.title}>Schedule a Service</Text>
       </View>
@@ -210,7 +212,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   backButton: {
-    fontSize: 24,
+    fontSize: 18,
     color: "#2980b9",
     marginRight: 10,
   },

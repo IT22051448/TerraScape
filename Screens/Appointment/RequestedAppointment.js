@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  Image,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -14,6 +15,7 @@ import {
   deleteAppointment,
   updateServiceNewFlag,
 } from "../../utils/databases/customerfirebaseDatabase";
+import { getServiceBySid } from "../../utils/databases/firebaseDatabase";
 
 const RequestedAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -25,6 +27,13 @@ const RequestedAppointments = () => {
     const fetchAppointments = async () => {
       try {
         const allAppointments = await getAllAppointments();
+
+        // Handle case where no appointments are found
+        if (!allAppointments || Object.keys(allAppointments).length === 0) {
+          setAppointments([]);
+          return;
+        }
+
         const customerAppointments = Object.entries(allAppointments).filter(
           ([, value]) => value.customerEmail === customerEmail
         );
@@ -33,18 +42,25 @@ const RequestedAppointments = () => {
           customerAppointments.map(([key, value]) => ({
             ...value,
             id: key,
-            serviceId: value.serviceId, // Ensure this line correctly maps the serviceId
+            serviceId: value.serviceId,
           }))
         );
       } catch (error) {
-        console.error("Error fetching appointments:", error);
+        // Log only if the error is unexpected
+        if (!error.message.includes("No appointments found")) {
+          console.error("Error fetching appointments:", error);
+        }
       }
     };
 
     fetchAppointments();
   }, [customerEmail]);
 
-  const handleCancelAppointment = async (appointmentId, serviceId) => {
+  const handleCancelAppointment = async (
+    appointmentId,
+    serviceId,
+    appointmentSid
+  ) => {
     Alert.alert(
       "Are you sure?",
       "Do you really want to cancel this appointment?",
@@ -57,22 +73,17 @@ const RequestedAppointments = () => {
           text: "OK",
           onPress: async () => {
             try {
-              await deleteAppointment(appointmentId);
-              console.log("Cancelling appointment:", appointmentId);
-
-              // Check if serviceId is defined before updating
-              if (serviceId) {
-                console.log("Updating serviceId to newService: true");
-                await updateServiceNewFlag(serviceId, true); // Ensure serviceId is valid
+              const service = await getServiceBySid(appointmentSid);
+              if (service) {
+                await deleteAppointment(appointmentId);
+                await updateServiceNewFlag(service.id, true);
+                setAppointments((prev) =>
+                  prev.filter((item) => item.id !== appointmentId)
+                );
+                Alert.alert("Appointment cancelled successfully.");
               } else {
-                console.error("Service ID is undefined.");
-                Alert.alert("Error", "Service ID is not available.");
+                Alert.alert("Error", "Service not found for the provided SID.");
               }
-
-              setAppointments((prev) =>
-                prev.filter((item) => item.id !== appointmentId)
-              );
-              Alert.alert("Appointment cancelled successfully.");
             } catch (error) {
               Alert.alert("Error", "Failed to cancel the appointment.");
               console.error("Error during cancellation:", error);
@@ -94,7 +105,9 @@ const RequestedAppointments = () => {
       <Text style={styles.appointmentStatus}>Status: {item.status}</Text>
       <TouchableOpacity
         style={styles.cancelButton}
-        onPress={() => handleCancelAppointment(item.id, item.serviceId)}
+        onPress={() =>
+          handleCancelAppointment(item.id, item.serviceId, item.sid)
+        }
       >
         <Text style={styles.buttonText}>Cancel Appointment</Text>
       </TouchableOpacity>
@@ -109,15 +122,25 @@ const RequestedAppointments = () => {
       >
         <Text style={styles.backButtonText}>&lt; Back</Text>
       </TouchableOpacity>
-      <FlatList
-        data={appointments}
-        renderItem={renderAppointmentItem}
-        keyExtractor={(item) => item.id}
-        ListHeaderComponent={
-          <Text style={styles.title}>Your Appointments</Text>
-        }
-        contentContainerStyle={styles.flatListContainer}
-      />
+      <Text style={styles.title}>Your Appointments</Text>
+      {appointments.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Image
+            source={require("../../assets/images/noitems.png")} // Add your empty state illustration
+            style={styles.emptyImage}
+          />
+          <Text style={styles.emptyText}>
+            You currently do not have any appointments pending.
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={appointments}
+          renderItem={renderAppointmentItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.flatListContainer}
+        />
+      )}
     </View>
   );
 };
@@ -126,17 +149,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#e0f7fa",
+    backgroundColor: "#f9f9f9", // Soft background color
   },
   backButton: {
     marginBottom: 20,
   },
   backButtonText: {
     fontSize: 18,
-    color: "#2c3e50",
+    color: "#2980b9", // More appealing color for the back button
   },
   title: {
-    fontSize: 28,
+    fontSize: 32, // Larger title for emphasis
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
@@ -160,7 +183,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   serviceTitle: {
-    fontSize: 20,
+    fontSize: 22, // Slightly larger for service title
     fontWeight: "bold",
     color: "#27ae60",
   },
@@ -196,6 +219,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
+    color: "#ffffff",
+    fontWeight: "bold",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 10,
+    marginVertical: 20,
+  },
+  emptyImage: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: "#7f8c8d",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  scheduleButton: {
+    backgroundColor: "#27ae60",
+    padding: 15,
+    borderRadius: 5,
+    alignItems: "center",
+    width: "80%",
+  },
+  scheduleButtonText: {
     color: "#ffffff",
     fontWeight: "bold",
   },

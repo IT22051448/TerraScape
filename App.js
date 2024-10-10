@@ -14,6 +14,8 @@ import ServiceConfirmation from "./Screens/Schedule/ServiceConfirmation";
 import ViewScheduledServices from "./Screens/Schedule/ViewScheduledServices";
 import MakeAppointment from "./Screens/Appointment/MakeAppointment";
 import RequestedAppointments from "./Screens/Appointment/RequestedAppointment";
+import ListingPage from "./Screens/ServiceListing/ListingPage";
+import ListingForm from "./Screens/ServiceListing/ListingForm";
 
 const Stack = createStackNavigator();
 
@@ -22,6 +24,8 @@ const MainStack = () => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="SignUp" component={SignUp} />
+      <Stack.Screen name="Listings" component={ListingPage} />
+      <Stack.Screen name="AddListing" component={ListingForm} />
       <Stack.Screen name="CustomerHome" component={CustomerHome} />
       <Stack.Screen
         name="ServiceProviderHome"

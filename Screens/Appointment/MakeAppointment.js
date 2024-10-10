@@ -48,6 +48,7 @@ const MakeAppointment = () => {
 
     // Prepare appointment data
     const appointmentData = {
+      sid: service.sid,
       serviceType: service.serviceType,
       description: service.description,
       amount: service.amount,
@@ -106,9 +107,13 @@ const MakeAppointment = () => {
       <Text style={styles.serviceProviderEmail}>
         Provider: {item.serviceProviderEmail}
       </Text>
-      {item.images.length > 0 && (
+
+      {Array.isArray(item.images) && item.images.length > 0 ? (
         <Image source={{ uri: item.images[0] }} style={styles.serviceImage} />
+      ) : (
+        <Text style={styles.noImageText}>No images available</Text>
       )}
+
       <TouchableOpacity
         style={styles.appointmentButton}
         onPress={() => handleMakeAppointment(item)}
@@ -217,6 +222,12 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#ffffff",
     fontWeight: "bold",
+  },
+  noImageText: {
+    color: "#ff0000", // or any color you prefer
+    textAlign: "center",
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
 
