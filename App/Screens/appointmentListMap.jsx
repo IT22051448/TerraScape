@@ -1,7 +1,6 @@
-//dldld
 import React from "react";
 import { Text, View, FlatList, StyleSheet } from "react-native";
-import useAppointments from "../utils/fetchAppointments"; 
+import useAppointments from "../utils/fetchAppointments";
 import AppointmentItem from "./AppointmentItem";
 
 export default function AppointmentListMap() {
@@ -16,7 +15,7 @@ export default function AppointmentListMap() {
       {appointments.length > 0 ? (
         <FlatList
           data={appointments}
-          //horizontal={true}
+          horizontal={true}
           renderItem={({ item }) => (
             <View style={styles.appointmentItem}>
               <AppointmentItem item={item}></AppointmentItem>
@@ -37,7 +36,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   appointmentItem: {
-    marginBottom: 10,
+    marginBottom: 50,
     padding: 10,
     backgroundColor: "#f9f9f9",
     borderRadius: 5,

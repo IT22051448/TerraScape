@@ -25,7 +25,7 @@ export const SpMap = () => {
       ) : (
         <Text style={styles.appointmentsText}>No appointments available</Text>
       )}
-      <View  style={styles.card}>
+      <View style={styles.card}>
         <AppointmentListMap />
       </View>
     </View>
