@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, ActivityIndicator, TouchableOpacity, ImageBackground } from "react-native";
 import { useSelector } from "react-redux"; // If you're using Redux to manage state
 import { getUserByEmail } from "../utils/databases/firebaseDatabase"; // Adjust the import path as needed
 import { useNavigation } from "@react-navigation/native";
@@ -49,6 +49,11 @@ const UserProfile = () => {
   }
 
   return (
+    <ImageBackground
+    source={require("../assets/images/background1.jpg")}
+    style={{ flex: 1 }}
+    resizeMode="cover"
+    >
     <View style={styles.container}>
       {/* Render back button only if the role is service provider */}
       {userData.role === 'ServiceProvider' && (
@@ -58,7 +63,7 @@ const UserProfile = () => {
       )}
       
       <Image
-        source={{ uri: 'https://w7.pngwing.com/pngs/954/328/png-transparent-computer-icons-user-profile-avatar-heroes-head-recruiter-thumbnail.png' }} // Replace with your dummy image URL
+        source={require('../assets/images/profilepic.png')}// Replace with your dummy image URL
         style={styles.profileImage}
       />
 
@@ -93,6 +98,7 @@ const UserProfile = () => {
         <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
     </View>
+    </ImageBackground>
   );
 };
 

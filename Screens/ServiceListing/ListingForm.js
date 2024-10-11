@@ -18,7 +18,7 @@ const ListingForm = ({ route, navigation }) => {
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   const handleSubmit = async () => {
-    if (title === '' || description === '' || servicePrice === '' || !category || !termsAccepted) {
+    if (title === '' || description === '' || servicePrice === '' || !category || !termsAccepted || !payType) {
       Alert.alert('Error', 'All fields are required and terms must be accepted.');
       return;
     }
@@ -105,6 +105,7 @@ const ListingForm = ({ route, navigation }) => {
           style={styles.picker}
           onValueChange={(itemValue) => setPayType(itemValue)}
         >
+          <Picker.Item label="Select Pay Type" value="" />
           <Picker.Item label="Per hour" value="Per hour" />
           <Picker.Item label="Per service" value="Per service" />
         </Picker>

@@ -14,7 +14,7 @@ const ServiceProviderHome = () => {
   const route = useRoute();
 
   // Use optional chaining or default value for fullName
-  const { fullName = "Service Provider" } = route.params || {};
+  const { fullName = "Service Provider" } = route.params;
 
   return (
     <ImageBackground
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonSecondary: {
-    backgroundColor: "#2196F3",
+    backgroundColor: "#7a7a7a",
     padding: 15,
     borderRadius: 10,
     width: "90%",
