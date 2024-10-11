@@ -8,14 +8,14 @@ import {
   Alert,
   Linking,
 } from "react-native";
-import { db } from "../utils/firebaseConfig"; // Make sure to import your firebase config
-import { doc, deleteDoc } from "firebase/firestore"; // Import deleteDoc
+import { db } from "../utils/firebaseConfig";
+import { doc, deleteDoc } from "firebase/firestore";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 const AppointmentDetails = ({ route, navigation }) => {
   const { appointment } = route.params;
 
   const handleDelete = async () => {
-    // Show confirmation alert
     Alert.alert(
       "Confirm Deletion",
       "Are you sure you want to reject this appointment?",
@@ -29,10 +29,9 @@ const AppointmentDetails = ({ route, navigation }) => {
           onPress: async () => {
             try {
               const appointmentDoc = doc(db, "appointments", appointment.id);
-              await deleteDoc(appointmentDoc); // Delete the appointment document
+              await deleteDoc(appointmentDoc);
               console.log(`Deleted appointment: ${appointment.id}`);
-              // Optionally, navigate back or show a success message
-              navigation.goBack(); // Navigate back after deletion
+              navigation.goBack();
             } catch (error) {
               console.error("Error deleting appointment: ", error);
             }
@@ -46,7 +45,6 @@ const AppointmentDetails = ({ route, navigation }) => {
   const handleNavigate = () => {
     const latitude = appointment.latitude;
     const longitude = appointment.longitude;
-
     const url = `geo:${latitude},${longitude}?q=${latitude},${longitude}`;
 
     Linking.canOpenURL(url)
@@ -64,11 +62,18 @@ const AppointmentDetails = ({ route, navigation }) => {
   };
 
   const handleStartJob = () => {
-    navigation.navigate("JobDashboard", { appointment }); // Pass appointment details
+    navigation.navigate("JobDashboard", { appointment });
   };
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Icon name="arrow-back" size={30} color="#fff" />
+      </TouchableOpacity>
+
       <Image source={{ uri: appointment.imageUrl }} style={styles.image} />
       <Text style={styles.title}>{appointment.title}</Text>
       <Text style={styles.date}>{appointment.date}</Text>
@@ -96,37 +101,48 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    backgroundColor: "#f7f7f7",
     padding: 20,
+  },
+  backButton: {
+    position: "absolute",
+    top: 20,
+    left: 20,
+    zIndex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: 50,
+    padding: 10,
   },
   image: {
     width: "100%",
-    height: 200,
+    height: 250,
     resizeMode: "cover",
+    borderRadius: 10,
+    marginBottom: 15,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
-    marginVertical: 10,
+    color: "#333",
+    marginBottom: 5,
   },
   date: {
-    fontSize: 16,
+    fontSize: 18,
     color: "gray",
-    marginBottom: 10,
+    marginBottom: 5,
   },
   status: {
-    fontSize: 16,
-    color: "blue",
+    fontSize: 18,
+    color: "#007BFF",
     marginBottom: 10,
   },
   description: {
     fontSize: 16,
-    color: "black",
-    marginBottom: 20,
+    color: "#555",
     textAlign: "center",
+    marginBottom: 25,
   },
   buttonContainer: {
-    flexDirection: "column",
-    justifyContent: "center",
     width: "100%",
   },
   navigateButton: {
@@ -135,15 +151,13 @@ const styles = StyleSheet.create({
     padding: 15,
     marginVertical: 5,
     alignItems: "center",
-    width: "100%",
   },
   startButton: {
-    backgroundColor: "#5B8E55",
+    backgroundColor: "#007BFF",
     borderRadius: 25,
     padding: 15,
     marginVertical: 5,
     alignItems: "center",
-    width: "100%",
   },
   rejectButton: {
     backgroundColor: "darkred",
@@ -151,7 +165,6 @@ const styles = StyleSheet.create({
     padding: 15,
     marginVertical: 5,
     alignItems: "center",
-    width: "100%",
   },
   buttonText: {
     color: "#fff",

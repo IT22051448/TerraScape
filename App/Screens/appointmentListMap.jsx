@@ -3,6 +3,7 @@ import { Text, View, FlatList, StyleSheet } from "react-native";
 import useAppointments from "../utils/fetchAppointments";
 import AppointmentItem from "./AppointmentItem";
 
+
 export default function AppointmentListMap() {
   const { appointments, loading } = useAppointments(); // Use the custom hook to fetch appointments
 
@@ -12,6 +13,7 @@ export default function AppointmentListMap() {
 
   return (
     <View style={styles.container}>
+      
       {appointments.length > 0 ? (
         <FlatList
           data={appointments}

@@ -20,8 +20,8 @@ export default function AppointmentItem({ item }) {
 
 const styles = StyleSheet.create({
   container: {
-    width: 300, // Set the desired width
-    position: "relative", // To position text absolutely within this container
+    width: 300, 
+    position: "relative", 
   },
   image: {
     width: "100%",

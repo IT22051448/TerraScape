@@ -1,5 +1,7 @@
 // App/Components/AppointmentList.js
 import React from "react";
+import Header from "./header"; 
+
 import {
   Text,
   View,
@@ -52,18 +54,29 @@ export default function AppointmentList({ navigation }) {
   }
 
   return (
-    <FlatList
-      data={appointments}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={renderAppointmentCard}
-      contentContainerStyle={styles.container}
-    />
+    <View style={styles.container}>
+      {/* Add the Header component */}
+      <Header title="Appointment List" />
+
+      {/* FlatList to show the appointments */}
+      <FlatList
+        data={appointments}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderAppointmentCard}
+        contentContainerStyle={styles.listContainer}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 10,
+    backgroundColor: "#f5f5f5", // Added background color for better styling
+  },
+  listContainer: {
+    paddingBottom: 20,
   },
   card: {
     backgroundColor: "#fff",
