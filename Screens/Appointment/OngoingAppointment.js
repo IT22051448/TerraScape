@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   Alert,
   Image,
+  Modal,
+  TextInput,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -14,11 +16,19 @@ import {
   getAllAppointments,
   deleteAppointment,
   updateServiceNewFlag,
+  updateAppointmentStatus,
 } from "../../utils/databases/customerfirebaseDatabase";
 import { getServiceBySid } from "../../utils/databases/firebaseDatabase";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const OngoingAppointments = () => {
   const [appointments, setAppointments] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [newDate, setNewDate] = useState(new Date());
+  const [newTime, setNewTime] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const { userData } = useSelector((state) => state.auth);
   const customerEmail = userData?.email;
   const navigation = useNavigation();
@@ -34,7 +44,7 @@ const OngoingAppointments = () => {
 
         const customerAppointments = Object.entries(allAppointments).filter(
           ([, value]) =>
-            value.customerEmail === customerEmail && value.status === "Accepted" // Only show accepted appointments
+            value.customerEmail === customerEmail && value.status === "Accepted"
         );
 
         setAppointments(
@@ -91,10 +101,51 @@ const OngoingAppointments = () => {
   };
 
   const handleRescheduleAppointment = (appointmentId) => {
-    Alert.alert(
-      "Reschedule Appointment",
-      "Reschedule functionality not implemented yet."
-    );
+    setSelectedAppointment(appointmentId);
+    setModalVisible(true);
+  };
+
+  const handleSubmitReschedule = async () => {
+    const formattedDate = `${newDate.getDate().toString().padStart(2, "0")}/${(
+      newDate.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, "0")}/${newDate.getFullYear()}`;
+    const formattedTime = `${newTime
+      .getHours()
+      .toString()
+      .padStart(2, "0")}:${newTime.getMinutes().toString().padStart(2, "0")}`;
+
+    try {
+      // Update the appointment status to "Pending"
+      await updateAppointmentStatus(selectedAppointment, "Pending");
+
+      // Optionally: Fetch updated appointments if needed
+      const allAppointments = await getAllAppointments();
+      const customerAppointments = Object.entries(allAppointments).filter(
+        ([, value]) =>
+          value.customerEmail === customerEmail && value.status === "Pending"
+      );
+
+      setAppointments(
+        customerAppointments.map(([key, value]) => ({
+          ...value,
+          id: key,
+          serviceId: value.serviceId,
+        }))
+      );
+
+      setModalVisible(false);
+      setNewDate(new Date());
+      setNewTime(new Date());
+      Alert.alert(
+        "Success",
+        `Appointment rescheduled to ${formattedDate} at ${formattedTime}.`
+      );
+    } catch (error) {
+      Alert.alert("Error", "Failed to reschedule the appointment.");
+      console.error("Error during rescheduling:", error);
+    }
   };
 
   const renderAppointmentItem = ({ item }) => (
@@ -150,6 +201,76 @@ const OngoingAppointments = () => {
           contentContainerStyle={styles.flatListContainer}
         />
       )}
+
+      {/* Modal for Rescheduling */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Reschedule Appointment</Text>
+            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+              <Text style={styles.input}>
+                {`New Date: ${newDate.getDate().toString().padStart(2, "0")}/${(
+                  newDate.getMonth() + 1
+                )
+                  .toString()
+                  .padStart(2, "0")}/${newDate.getFullYear()}`}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setShowTimePicker(true)}>
+              <Text style={styles.input}>
+                {`New Time: ${newTime
+                  .getHours()
+                  .toString()
+                  .padStart(2, "0")}:${newTime
+                  .getMinutes()
+                  .toString()
+                  .padStart(2, "0")}`}
+              </Text>
+            </TouchableOpacity>
+
+            {showDatePicker && (
+              <DateTimePicker
+                value={newDate}
+                mode="date"
+                display="default"
+                onChange={(event, date) => {
+                  setShowDatePicker(false);
+                  if (date) setNewDate(date);
+                }}
+              />
+            )}
+            {showTimePicker && (
+              <DateTimePicker
+                value={newTime}
+                mode="time"
+                display="default"
+                onChange={(event, time) => {
+                  setShowTimePicker(false);
+                  if (time) setNewTime(time);
+                }}
+              />
+            )}
+
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={handleSubmitReschedule}
+            >
+              <Text style={styles.buttonText}>Submit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -257,6 +378,41 @@ const styles = StyleSheet.create({
     color: "#7f8c8d",
     textAlign: "center",
     marginBottom: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  input: {
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#2980b9",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    textAlign: "center",
+    fontSize: 18,
+  },
+  submitButton: {
+    backgroundColor: "#2980b9",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginBottom: 10,
   },
 });
 

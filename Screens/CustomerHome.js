@@ -94,10 +94,6 @@ const CustomerHome = () => {
           <Text style={styles.buttonText}>Feedback and Reviews</Text>
         </TouchableOpacity>
       </View>
-      {/* Sign Out Button */}
-      <TouchableOpacity style={styles.buttonSecondary} onPress={handleSignOut}>
-        <Text style={styles.buttonText}>Sign Out</Text>
-      </TouchableOpacity>
     </ImageBackground>
   );
 };

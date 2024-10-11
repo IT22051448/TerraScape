@@ -63,7 +63,6 @@ const SignIn = () => {
       const userFromDb = await getUserByEmail(email);
       const userData = Object.values(userFromDb)[0];
 
-      // Dispatch the authenticate action with user data
       dispatch(
         authenticate({
           token: result.userData.token,
@@ -71,7 +70,7 @@ const SignIn = () => {
             uid: userData.uid,
             fullName: userData.fullName,
             email: userData.email,
-            imageUrl: userData.imageUrl, // Assume imageUrl is part of the user data
+            imageUrl: userData.imageUrl,
             role: userData.role,
           },
         })
@@ -80,11 +79,11 @@ const SignIn = () => {
       setError(null);
       setIsLoading(false);
 
-      if (userData.role === "ServiceProvider") {
-        navigation.navigate("ServiceProviderHome");
-      } else {
-        navigation.navigate("CustomerHome");
-      }
+      navigation.navigate(
+        userData.role === "ServiceProvider"
+          ? "ServiceProviderHome"
+          : "CustomerHome"
+      );
     } catch (error) {
       setIsLoading(false);
       setError(error.message);
@@ -119,35 +118,20 @@ const SignIn = () => {
   return (
     <ImageBackground
       source={require("../../assets/images/background1.jpg")}
-      style={{ flex: 1 }}
+      style={styles.background}
       resizeMode="cover"
     >
+      <View style={styles.overlay} />
+
       <ScrollView
-        style={{ flex: 1, padding: 16 }}
-        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
       >
-        {/* Grey Box for Inputs and Title */}
+        <Text style={styles.mainTitle}>TERRASCAPE</Text>
+
         <View style={styles.inputContainer}>
-          <Text
-            style={{
-              color: "black",
-              fontSize: 37,
-              fontWeight: "700",
-              marginBottom: 10,
-              textAlign: "center",
-            }}
-          >
-            Sign In
-          </Text>
-          <Text
-            style={{
-              color: "black",
-              fontSize: 15,
-              fontWeight: "400",
-              textAlign: "center",
-              marginBottom: 20,
-            }}
-          >
+          <Text style={styles.signInTitle}>Sign In</Text>
+          <Text style={styles.signInSubtitle}>
             Sign in now to access your account.
           </Text>
 
@@ -159,15 +143,8 @@ const SignIn = () => {
             errorText={formState.inputValidities.email}
             onInputChanged={inputChangedHandler}
           />
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              width: "100%",
-              marginBottom: 10,
-            }}
-          >
-            <View style={{ flex: 1 }}>
+          <View style={styles.passwordContainer}>
+            <View style={styles.passwordInput}>
               <CustomInput
                 id="password"
                 value={formState.inputValues.password}
@@ -181,7 +158,7 @@ const SignIn = () => {
             </View>
             <TouchableOpacity
               onPress={() => setPasswordVisible(!isPasswordVisible)}
-              style={{ position: "absolute", right: 15, top: 25 }}
+              style={styles.passwordToggle}
             >
               <AntDesign
                 name={isPasswordVisible ? "eye" : "eyeo"}
@@ -194,21 +171,12 @@ const SignIn = () => {
             title="Sign In"
             onPress={authHandler}
             isLoading={isLoading}
-            style={{
-              margin: 10,
-              backgroundColor: "white",
-              borderColor: "white",
-            }}
+            style={styles.signInButton}
           />
           <View style={styles.bottomContainer}>
-            <Text style={{ fontSize: 12, color: "black", fontWeight: "400" }}>
-              Don't have an Account?
-            </Text>
+            <Text style={styles.bottomText}>Don't have an Account?</Text>
             <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
-              <Text style={{ fontSize: 14, fontWeight: "800", color: "black" }}>
-                {" "}
-                Sign Up
-              </Text>
+              <Text style={styles.signUpText}> Sign Up</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -218,23 +186,93 @@ const SignIn = () => {
 };
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.3)", // Dark overlay for better text visibility
+  },
+  scrollView: {
+    flex: 1,
+    padding: 16,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+  },
+  mainTitle: {
+    fontSize: 36,
+    fontWeight: "bold",
+    color: "#fff",
+    marginTop: 5,
+    marginBottom: 20,
+    textAlign: "center",
+    textShadowColor: "#000",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 10,
+  },
   inputContainer: {
-    backgroundColor: "rgba(240, 240, 240, 1)", // Lighter grey with transparency
+    backgroundColor: "rgba(240, 240, 240, 1)",
     borderRadius: 10,
     padding: 20,
     marginVertical: 20,
+  },
+  signInTitle: {
+    color: "black",
+    fontSize: 37,
+    fontWeight: "700",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  signInSubtitle: {
+    color: "black",
+    fontSize: 15,
+    fontWeight: "400",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    marginBottom: 10,
+  },
+  passwordInput: {
+    flex: 1,
+  },
+  passwordToggle: {
+    position: "absolute",
+    right: 15,
+    top: 25,
+  },
+  signInButton: {
+    margin: 10,
+    backgroundColor: "white",
+    borderColor: "white",
   },
   bottomContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 4,
+    marginVertical: 40,
+    marginHorizontal: 80,
   },
-  centeredButton: {
-    justifyContent: "flex-end",
-    alignItems: "baseline",
-    bottom: 10,
-    left: 20,
+  bottomText: {
+    fontSize: 12,
+    color: "black",
+    fontWeight: "400",
+  },
+  signUpText: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: "black",
   },
 });
 
