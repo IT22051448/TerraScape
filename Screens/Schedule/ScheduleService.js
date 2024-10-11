@@ -54,7 +54,7 @@ const ScheduleService = () => {
       const validUris = result.assets
         ? result.assets.map((asset) => asset.uri).filter((uri) => uri)
         : [];
-      setImages([...images, ...validUris]);
+      setImages((prevImages) => [...prevImages, ...validUris]);
     }
   };
 
@@ -86,7 +86,6 @@ const ScheduleService = () => {
 
     const serviceData = {
       sid: uuid.v4(),
-      images,
       serviceType,
       description,
       amount,
@@ -97,7 +96,8 @@ const ScheduleService = () => {
     };
 
     try {
-      await addService(serviceData);
+      await addService(serviceData, images); // Pass images array to addService
+
       Alert.alert("Service scheduled successfully!");
       // Navigate to the ServiceConfirmation page with service data
       navigation.navigate("ServiceConfirmation", serviceData);
@@ -248,6 +248,7 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: "bold",
     marginBottom: 5,
+    marginTop: 10,
     color: "#34495e",
   },
   rateContainer: {

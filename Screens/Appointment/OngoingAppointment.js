@@ -17,7 +17,7 @@ import {
 } from "../../utils/databases/customerfirebaseDatabase";
 import { getServiceBySid } from "../../utils/databases/firebaseDatabase";
 
-const RequestedAppointments = () => {
+const OngoingAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const { userData } = useSelector((state) => state.auth);
   const customerEmail = userData?.email;
@@ -34,7 +34,7 @@ const RequestedAppointments = () => {
 
         const customerAppointments = Object.entries(allAppointments).filter(
           ([, value]) =>
-            value.customerEmail === customerEmail && value.status !== "Accepted" // Exclude accepted appointments
+            value.customerEmail === customerEmail && value.status === "Accepted" // Only show accepted appointments
         );
 
         setAppointments(
@@ -51,19 +51,6 @@ const RequestedAppointments = () => {
 
     fetchAppointments();
   }, [customerEmail]);
-
-  const handleRemoveAppointment = async (appointmentId) => {
-    try {
-      await deleteAppointment(appointmentId);
-      setAppointments((prev) =>
-        prev.filter((item) => item.id !== appointmentId)
-      );
-      Alert.alert("Appointment removed successfully.");
-    } catch (error) {
-      Alert.alert("Error", "Failed to remove the appointment.");
-      console.error("Error during removal:", error);
-    }
-  };
 
   const handleCancelAppointment = async (
     appointmentId,
@@ -103,6 +90,13 @@ const RequestedAppointments = () => {
     );
   };
 
+  const handleRescheduleAppointment = (appointmentId) => {
+    Alert.alert(
+      "Reschedule Appointment",
+      "Reschedule functionality not implemented yet."
+    );
+  };
+
   const renderAppointmentItem = ({ item }) => (
     <View style={styles.card}>
       <Text style={styles.serviceTitle}>{item.serviceType}</Text>
@@ -112,39 +106,20 @@ const RequestedAppointments = () => {
       <Text style={styles.serviceDate}>Date: {item.date}</Text>
       <Text style={styles.serviceTime}>Time: {item.time}</Text>
       <Text style={styles.appointmentStatus}>Status: {item.status}</Text>
-      <Text style={styles.paymentMethod}>
-        Payment Method: {item.paymentMethod}
-      </Text>
-      <Text style={styles.paymentStatus}>
-        Payment Status: {item.paymentStatus}
-      </Text>
-      {item.imageUrl && (
-        <Image source={{ uri: item.imageUrl }} style={styles.image} />
-      )}
-      {item.status === "Rejected" ? (
-        <TouchableOpacity
-          style={styles.cancelButton}
-          onPress={() => handleRemoveAppointment(item.id)}
-        >
-          <Text style={styles.buttonText}>Remove Appointment</Text>
-        </TouchableOpacity>
-      ) : item.status === "Pending" || item.status === "Accepted" ? (
-        <TouchableOpacity
-          style={styles.cancelButton}
-          onPress={() =>
-            handleCancelAppointment(item.id, item.serviceId, item.sid)
-          }
-        >
-          <Text style={styles.buttonText}>Cancel Appointment</Text>
-        </TouchableOpacity>
-      ) : item.status === "Cancelled" ? (
-        <TouchableOpacity
-          style={styles.cancelButton}
-          onPress={() => handleRemoveAppointment(item.id)}
-        >
-          <Text style={styles.buttonText}>Remove Appointment</Text>
-        </TouchableOpacity>
-      ) : null}
+      <TouchableOpacity
+        style={styles.cancelButton}
+        onPress={() =>
+          handleCancelAppointment(item.id, item.serviceId, item.sid)
+        }
+      >
+        <Text style={styles.buttonText}>Cancel Appointment</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.rescheduleButton}
+        onPress={() => handleRescheduleAppointment(item.id)}
+      >
+        <Text style={styles.buttonText}>Reschedule Appointment</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -156,7 +131,7 @@ const RequestedAppointments = () => {
       >
         <Text style={styles.backButtonText}>&lt; Back</Text>
       </TouchableOpacity>
-      <Text style={styles.title}>Your Appointments</Text>
+      <Text style={styles.title}>Ongoing Appointments</Text>
       {appointments.length === 0 ? (
         <View style={styles.emptyContainer}>
           <Image
@@ -164,7 +139,7 @@ const RequestedAppointments = () => {
             style={styles.emptyImage}
           />
           <Text style={styles.emptyText}>
-            You currently do not have any appointments pending.
+            You currently do not have any ongoing appointments.
           </Text>
         </View>
       ) : (
@@ -246,17 +221,15 @@ const styles = StyleSheet.create({
     color: "#d35400",
     fontWeight: "bold",
   },
-  paymentMethod: {
-    marginBottom: 5,
-    color: "#2980b9",
-  },
-  paymentStatus: {
-    marginBottom: 10,
-    color: "#e74c3c",
-    fontWeight: "bold",
-  },
   cancelButton: {
     backgroundColor: "#c0392b",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  rescheduleButton: {
+    backgroundColor: "#27ae60",
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
@@ -285,12 +258,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
   },
-  image: {
-    width: "100%",
-    height: 200,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
 });
 
-export default RequestedAppointments;
+export default OngoingAppointments;

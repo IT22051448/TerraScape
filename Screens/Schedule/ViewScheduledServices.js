@@ -12,14 +12,12 @@ import {
   getUserServices,
   deleteService,
 } from "../../utils/databases/firebaseDatabase";
-import EditService from "../../Components/EditService";
 
-const ViewScheduledServices = ({ navigation }) => {
+const ViewScheduledServices = ({ navigation, route }) => {
   const { userData } = useSelector((state) => state.auth);
   const serviceProviderEmail = userData?.email;
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editingService, setEditingService] = useState(null);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -35,6 +33,21 @@ const ViewScheduledServices = ({ navigation }) => {
 
     fetchServices();
   }, [serviceProviderEmail]);
+
+  useEffect(() => {
+    if (route.params?.refresh) {
+      const fetchServices = async () => {
+        try {
+          const userServices = await getUserServices(serviceProviderEmail);
+          setServices(userServices);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      fetchServices();
+    }
+  }, [route.params]);
 
   const handleDelete = async (serviceId) => {
     try {
@@ -61,7 +74,12 @@ const ViewScheduledServices = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.editButton}
-          onPress={() => setEditingService({ id: item[0], data: item[1] })}
+          onPress={() =>
+            navigation.navigate("UpdateService", {
+              serviceId: item[0],
+              serviceDetails: item[1],
+            })
+          }
         >
           <Text style={styles.buttonText}>Edit</Text>
         </TouchableOpacity>
@@ -84,18 +102,8 @@ const ViewScheduledServices = ({ navigation }) => {
     </View>
   );
 
-  const closeEdit = () => setEditingService(null); // Close edit modal
-
   if (loading) {
     return <Text style={styles.loadingText}>Loading services...</Text>;
-  }
-
-  if (Object.keys(services).length === 0) {
-    return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>No scheduled services found.</Text>
-      </View>
-    );
   }
 
   return (
@@ -107,17 +115,17 @@ const ViewScheduledServices = ({ navigation }) => {
         <Text style={styles.backButtonText}>{"< Back"}</Text>
       </TouchableOpacity>
       <Text style={styles.heading}>Your Scheduled Services</Text>
-      <FlatList
-        data={Object.entries(services)}
-        keyExtractor={(item) => item[0]} // Using service ID as key
-        renderItem={renderService}
-        showsVerticalScrollIndicator={false}
-      />
-      {editingService && (
-        <EditService
-          serviceId={editingService.id}
-          initialData={editingService.data}
-          onClose={closeEdit}
+
+      {Object.keys(services).length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No scheduled services found.</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={Object.entries(services)}
+          keyExtractor={(item) => item[0]} // Using service ID as key
+          renderItem={renderService}
+          showsVerticalScrollIndicator={false}
         />
       )}
     </View>

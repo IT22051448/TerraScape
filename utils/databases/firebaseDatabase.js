@@ -7,8 +7,10 @@ import {
   orderByChild,
   equalTo,
   remove,
+  update,
 } from "firebase/database";
 import { getFirebaseApp } from "../firebaseHelper";
+import { uploadImage } from "./imageStorage";
 
 // Initialize Realtime Database
 const dbRealtime = getDatabase(getFirebaseApp());
@@ -31,17 +33,25 @@ export const getUserByEmail = async (email) => {
   }
 };
 
-export const addService = async (serviceData) => {
+export const addService = async (serviceData, imageUris = []) => {
   try {
     console.log("Attempting to add service data:", serviceData);
 
     // Create a unique key for each service
     const newServiceRef = ref(dbRealtime, "services/" + Date.now());
 
-    // Add newService: true to the service data
+    // Upload each image and get their URLs
+    const imageUrls = await Promise.all(
+      imageUris.map(async (imageUri) => {
+        return await uploadImage(imageUri);
+      })
+    );
+
+    // Add the array of image URLs to the service data
     const updatedServiceData = {
       ...serviceData,
       newService: true,
+      imageUrls, // Store the array of image URLs
     };
 
     await set(newServiceRef, updatedServiceData);
@@ -100,8 +110,11 @@ export const deleteService = async (serviceId) => {
 // Update service
 export const updateService = async (serviceId, updatedData) => {
   try {
-    const serviceRef = ref(dbRealtime, `services/${serviceId}`);
-    await set(serviceRef, updatedData);
+    const serviceRef = ref(getDatabase(), `services/${serviceId}`);
+
+    // Use update to merge the updated data with existing data
+    await update(serviceRef, updatedData);
+
     console.log("Service updated successfully.");
   } catch (error) {
     console.error("Error updating service:", error);

@@ -8,7 +8,10 @@ import {
   Image,
   Alert,
   TextInput,
+  Modal,
+  Pressable,
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import {
@@ -20,9 +23,11 @@ import {
 const MakeAppointment = () => {
   const navigation = useNavigation();
   const [services, setServices] = useState([]);
-  const [address, setAddress] = useState(""); // State for user address input
+  const [address, setAddress] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("Cash");
+  const [selectedService, setSelectedService] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  // Get user data from Redux store
   const { userData } = useSelector((state) => state.auth);
   const customerEmail = userData?.email;
   const customerName = userData?.fullName;
@@ -44,44 +49,51 @@ const MakeAppointment = () => {
     fetchServices();
   }, []);
 
-  const handleMakeAppointment = async (service) => {
+  const handleMakeAppointment = (service) => {
     if (!address) {
       Alert.alert("Error", "Please enter your address.");
       return;
     }
 
-    console.log("Selected service:", service);
+    setSelectedService(service);
+    setModalVisible(true);
+  };
 
+  const confirmAppointment = async () => {
     const appointmentData = {
-      sid: service.sid,
-      serviceType: service.serviceType,
-      description: service.description,
-      amount: service.amount,
-      rateType: service.rateType,
-      date: service.date,
-      time: service.time,
-      serviceProviderEmail: service.serviceProviderEmail,
+      sid: selectedService.sid,
+      serviceType: selectedService.serviceType,
+      description: selectedService.description,
+      amount: selectedService.amount,
+      rateType: selectedService.rateType,
+      date: selectedService.date,
+      time: selectedService.time,
+      serviceProviderEmail: selectedService.serviceProviderEmail,
       customerEmail: customerEmail,
       customerName: customerName,
       status: "Pending",
+      paymentMethod: paymentMethod,
+      paymentStatus: "Pending",
       createdAt: Date.now(),
-      location: address, // Use the user's address
+      location: address,
     };
 
     try {
       await requestAppointment(appointmentData);
-      await updateServiceNewFlag(service.id, false);
-      const updatedServices = await getAllServices();
-      const updatedService = updatedServices[service.id];
+      await updateServiceNewFlag(selectedService.id, false);
 
-      if (updatedService && updatedService.newService === false) {
-        Alert.alert(
-          "Appointment Created",
-          `You have made an appointment for ${service.serviceType}.`
-        );
-      } else {
-        Alert.alert("Error", "Failed to update service. Please try again.");
-      }
+      const updatedServices = await getAllServices();
+      const availableServices = Object.entries(updatedServices)
+        .filter(([key, service]) => service.newService === true)
+        .map(([key, service]) => ({ ...service, id: key }));
+
+      setServices(availableServices);
+      setModalVisible(false);
+
+      Alert.alert(
+        "Appointment Created",
+        `You have made an appointment for ${selectedService.serviceType}.`
+      );
     } catch (error) {
       console.error("Error creating appointment:", error);
       Alert.alert("Error", "Failed to create appointment: " + error.message);
@@ -93,15 +105,22 @@ const MakeAppointment = () => {
       <Text style={styles.serviceTitle}>{item.serviceType}</Text>
       <Text style={styles.serviceDescription}>{item.description}</Text>
       <Text style={styles.serviceAmount}>Amount: ${item.amount}</Text>
-      <Text style={styles.serviceRate}>Rate Type: {item.rateType}</Text>
+      <Text style={styles.serviceRate}>Cost based on: {item.rateType}</Text>
       <Text style={styles.serviceDate}>Date: {item.date}</Text>
       <Text style={styles.serviceTime}>Time: {item.time}</Text>
       <Text style={styles.serviceProviderEmail}>
         Provider: {item.serviceProviderEmail}
       </Text>
 
-      {Array.isArray(item.images) && item.images.length > 0 ? (
-        <Image source={{ uri: item.images[0] }} style={styles.serviceImage} />
+      {item.imageUrls && item.imageUrls.length > 0 ? (
+        <FlatList
+          data={item.imageUrls}
+          renderItem={({ item: imageUrl }) => (
+            <Image source={{ uri: imageUrl }} style={styles.serviceImage} />
+          )}
+          keyExtractor={(imageUrl) => imageUrl}
+          horizontal
+        />
       ) : (
         <Text style={styles.noImageText}>No images available</Text>
       )}
@@ -124,7 +143,8 @@ const MakeAppointment = () => {
         <Text style={styles.backButtonText}>{"< back"}</Text>
       </TouchableOpacity>
 
-      {/* Input for user's address */}
+      <Text style={styles.title}>Available Services</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Enter your address"
@@ -132,14 +152,60 @@ const MakeAppointment = () => {
         onChangeText={(text) => setAddress(text)}
       />
 
-      <FlatList
-        data={services}
-        renderItem={renderServiceItem}
-        keyExtractor={(item) => item.serviceType + item.date + item.time}
-        ListHeaderComponent={
-          <Text style={styles.title}>Available Services</Text>
-        }
-      />
+      {services.length === 0 ? (
+        <Text style={styles.noServicesText}>
+          No services available at this time.
+        </Text>
+      ) : (
+        <FlatList
+          data={services}
+          renderItem={renderServiceItem}
+          keyExtractor={(item) => item.id}
+        />
+      )}
+
+      {/* Modal for payment method */}
+      {selectedService && (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Select Payment Method</Text>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  selectedValue={paymentMethod}
+                  onValueChange={(itemValue) => setPaymentMethod(itemValue)}
+                  style={styles.picker}
+                  itemStyle={styles.pickerItem} // Apply style to Picker items
+                >
+                  <Picker.Item label="Cash" value="Cash" />
+                  <Picker.Item label="Bank Transfer" value="Bank Transfer" />
+                </Picker>
+              </View>
+              <View style={styles.modalButtons}>
+                <Pressable
+                  style={[styles.button, styles.buttonClose]}
+                  onPress={() => setModalVisible(!modalVisible)}
+                >
+                  <Text style={styles.textStyle}>Cancel</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.button, styles.buttonConfirm]}
+                  onPress={confirmAppointment}
+                >
+                  <Text style={styles.textStyle}>Confirm</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -148,95 +214,172 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#e0f7fa",
+    backgroundColor: "#f5f5f5",
   },
   backButton: {
     padding: 8,
   },
   backButtonText: {
-    fontSize: 24,
-    color: "#2c3e50",
+    fontSize: 20,
+    color: "#34495e",
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
     color: "#2c3e50",
   },
   input: {
-    height: 40,
-    borderColor: "#34495e",
+    height: 45,
+    borderColor: "#95a5a6",
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
-    borderRadius: 5,
+    borderRadius: 8,
+    backgroundColor: "#ffffff",
+    fontSize: 16,
   },
   card: {
     backgroundColor: "#ffffff",
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  serviceTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#1abc9c",
+  },
+  serviceDescription: {
+    marginBottom: 8,
+    color: "#7f8c8d",
+  },
+  serviceAmount: {
+    marginBottom: 5,
+    fontSize: 16,
+    color: "#34495e",
+  },
+  serviceRate: {
+    marginBottom: 5,
+    fontSize: 16,
+    color: "#34495e",
+  },
+  serviceDate: {
+    marginBottom: 5,
+    fontSize: 16,
+    color: "#34495e",
+  },
+  serviceTime: {
+    marginBottom: 5,
+    fontSize: 16,
+    color: "#34495e",
+  },
+  serviceProviderEmail: {
+    marginBottom: 10,
+    fontSize: 14,
+    color: "#95a5a6",
+  },
+  serviceImage: {
+    width: 120, // Adjust width as needed
+    height: 120, // Keep height consistent
     borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
+    marginRight: 10, // Space between images
+  },
+  appointmentButton: {
+    backgroundColor: "#27ae60",
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  noImageText: {
+    color: "#e74c3c",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalView: {
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
     },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowRadius: 4,
     elevation: 5,
   },
-  serviceTitle: {
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
     fontSize: 20,
     fontWeight: "bold",
-    color: "#27ae60",
   },
-  serviceDescription: {
-    marginBottom: 10,
-    color: "#34495e",
-  },
-  serviceAmount: {
-    marginBottom: 5,
-    color: "#34495e",
-  },
-  serviceRate: {
-    marginBottom: 5,
-    color: "#34495e",
-  },
-  serviceDate: {
-    marginBottom: 5,
-    color: "#34495e",
-  },
-  serviceTime: {
-    marginBottom: 10,
-    color: "#34495e",
-  },
-  serviceProviderEmail: {
-    marginBottom: 10,
-    color: "#34495e",
-    fontStyle: "italic",
-  },
-  serviceImage: {
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: "#95a5a6",
+    borderRadius: 8,
+    marginBottom: 20,
     width: "100%",
-    height: 200,
-    borderRadius: 10,
-    marginBottom: 10,
+    overflow: "hidden",
   },
-  appointmentButton: {
-    backgroundColor: "#27ae60",
+  picker: {
+    height: 50,
+    width: "100%",
+  },
+  pickerItem: {
+    height: 60,
+    fontSize: 18,
+    backgroundColor: "#f5f5f5",
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  button: {
+    borderRadius: 8,
     padding: 10,
-    borderRadius: 5,
-    alignItems: "center",
+    elevation: 2,
   },
-  buttonText: {
-    color: "#ffffff",
-    fontWeight: "bold",
+  buttonClose: {
+    backgroundColor: "#e74c3c",
+    marginRight: 10,
+    flex: 1,
   },
-  noImageText: {
-    color: "#ff0000",
+  buttonConfirm: {
+    backgroundColor: "#27ae60",
+    flex: 1,
+  },
+  textStyle: {
+    color: "white",
     textAlign: "center",
-    marginTop: 10,
-    marginBottom: 10,
+    fontSize: 16,
+  },
+  noServicesText: {
+    textAlign: "center",
+    color: "#e74c3c",
   },
 });
 

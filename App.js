@@ -16,6 +16,9 @@ import MakeAppointment from "./Screens/Appointment/MakeAppointment";
 import RequestedAppointments from "./Screens/Appointment/RequestedAppointment";
 import ListingPage from "./Screens/ServiceListing/ListingPage";
 import ListingForm from "./Screens/ServiceListing/ListingForm";
+import CustomerAppointment from "./Screens/Schedule/CustomerAppointment";
+import OngoingAppointment from "./Screens/Appointment/OngoingAppointment";
+import UpdateService from "./Screens/Schedule/UpdateService";
 
 const Stack = createStackNavigator();
 
@@ -45,6 +48,12 @@ const MainStack = () => (
         name="RequestedAppointments"
         component={RequestedAppointments}
       />
+      <Stack.Screen
+        name="CustomerAppointment"
+        component={CustomerAppointment}
+      />
+      <Stack.Screen name="OngoingAppointment" component={OngoingAppointment} />
+      <Stack.Screen name="UpdateService" component={UpdateService} />
     </Stack.Navigator>
   </Provider>
 );

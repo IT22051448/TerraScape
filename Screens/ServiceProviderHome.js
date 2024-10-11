@@ -75,7 +75,7 @@ const ServiceProviderHome = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate("RequestedAppointments")}
+          onPress={() => navigation.navigate("CustomerAppointment")}
         >
           <Text style={styles.buttonText}>Requested Appointments</Text>
         </TouchableOpacity>

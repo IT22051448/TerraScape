@@ -76,7 +76,7 @@ const CustomerHome = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate("temp")}
+          onPress={() => navigation.navigate("OngoingAppointment")}
         >
           <Text style={styles.buttonText}>Ongoing Appointment</Text>
         </TouchableOpacity>
