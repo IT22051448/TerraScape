@@ -131,18 +131,24 @@ const ScheduleService = () => {
         ))}
       </View>
 
+      {/* Add labels for Service Type, Description, and Amount */}
+      <Text style={styles.label}>Service Type</Text>
       <TextInput
         placeholder="Service Type"
         value={serviceType}
         onChangeText={setServiceType}
         style={styles.input}
       />
+
+      <Text style={styles.label}>Description</Text>
       <TextInput
         placeholder="Description"
         value={description}
         onChangeText={setDescription}
         style={styles.input}
       />
+
+      <Text style={styles.label}>Amount</Text>
       <TextInput
         placeholder="Amount"
         value={amount}
@@ -273,6 +279,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     marginTop: 50,
+    marginBottom: 50,
     alignItems: "center",
   },
   submitButtonText: {
