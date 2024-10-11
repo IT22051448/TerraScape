@@ -6,6 +6,21 @@ import Icon from 'react-native-vector-icons/Feather';
 import { Picker } from '@react-native-picker/picker';
 import MapWithSlider from './MapWithSlider'; // Import the MapWithSlider component
 
+const getCategoryImage = (category) => {
+  switch (category) {
+    case 'Garden Design':
+      return 'https://i.pinimg.com/originals/c5/67/1b/c5671b90dbbd368ea0bcf6ef03a92272.jpg'; // Example image for Garden Design
+    case 'Lawn Care':
+      return 'https://media.istockphoto.com/id/475958716/photo/lawn-mower.jpg?s=612x612&w=0&k=20&c=TIGBHDkXS9IJbq84NHtfsFIPp_aqy6APWni2r_oS2NQ='; // Example image for Lawn Care
+    case 'Hardscaping':
+      return 'https://brennanslandscaping.com/wp-content/uploads/2019/06/What-is-Hardscape-Design_Manassas-VA.jpg'; // Example image for Hardscaping
+    case 'Water Services':
+      return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmxzdtlJxXbAeov1AZJyy26QabKCvgK1CbNQ&s'; // Example image for Water Services
+    default:
+      return 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=60'; // Default fallback image
+  }
+};
+
 const CustomerServiceListings = ({ navigation }) => {
   const dispatch = useDispatch();
   const listings = useSelector(state => state.listings.listings);
@@ -155,13 +170,11 @@ const CustomerServiceListings = ({ navigation }) => {
       <View style={styles.cardWrapper}>
         <View style={styles.cardContainer}>
           <View style={styles.imageContainer}>
-            <Image
-              source={{
-                uri: item.image || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80',
-              }}
-              style={styles.image}
-              resizeMode="cover"
-            />
+          <Image
+                        source={{ uri: item.image || getCategoryImage(item.category) }}
+                        style={styles.image}
+                        resizeMode="cover"
+                      />
           </View>
 
           <View style={styles.cardContent}>
@@ -170,7 +183,7 @@ const CustomerServiceListings = ({ navigation }) => {
             <Text style={styles.priceText}>Price: ${item.servicePrice} / {item.payType}</Text>
             <TouchableOpacity
                     style={styles.button}
-                    onPress={() => navigation.navigate('AddListing', { listing: item })}
+                    onPress={() => navigation.navigate('ListingDetail', { listing: item })}
                   >
                     <Text style={styles.buttonText}>Schedule Appointment</Text>
                   </TouchableOpacity>
@@ -299,7 +312,7 @@ const styles = StyleSheet.create({
   filterButton: {
     padding: 10,
     backgroundColor: '#5B8E55',
-    borderRadius: 5,
+    borderRadius: 15,
     margin: 10,
     alignItems: 'center',
   },
@@ -316,7 +329,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     backgroundColor: '#666',
     margin: 10,
-    borderRadius:5,
+    
   },
 });
 

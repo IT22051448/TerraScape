@@ -2,6 +2,21 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Adjusted import for Ionicons
 
+const getCategoryImage = (category) => {
+    switch (category) {
+      case 'Garden Design':
+        return 'https://i.pinimg.com/originals/c5/67/1b/c5671b90dbbd368ea0bcf6ef03a92272.jpg'; // Example image for Garden Design
+      case 'Lawn Care':
+        return 'https://media.istockphoto.com/id/475958716/photo/lawn-mower.jpg?s=612x612&w=0&k=20&c=TIGBHDkXS9IJbq84NHtfsFIPp_aqy6APWni2r_oS2NQ='; // Example image for Lawn Care
+      case 'Hardscaping':
+        return 'https://brennanslandscaping.com/wp-content/uploads/2019/06/What-is-Hardscape-Design_Manassas-VA.jpg'; // Example image for Hardscaping
+      case 'Water Services':
+        return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmxzdtlJxXbAeov1AZJyy26QabKCvgK1CbNQ&s'; // Example image for Water Services
+      default:
+        return 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=60'; // Default fallback image
+    }
+  };
+
 
 const ListingDetail = ({ route, navigation }) => {
   const { listing } = route.params; // Receive the listing data from the previous screen
@@ -15,13 +30,11 @@ const ListingDetail = ({ route, navigation }) => {
         <Text style={styles.title}>Listing Details</Text>
       </View>
       <View style={styles.imageContainer}>
-            <Image
-              source={{
-                uri: listing.image || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80',
-              }}
-              style={styles.image}
-              resizeMode="cover"
-            />
+      <Image
+                        source={{ uri: listing.image || getCategoryImage(listing.category) }}
+                        style={styles.image}
+                        resizeMode="cover"
+                      />
           </View>
     <View style={styles.cardWrapper}>
      <View style={styles.cardContainer}>

@@ -78,6 +78,7 @@ const MainStack = ({ userRole }) => (
   <Provider store={store}>
     <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Tab.Screen name="UserProfile" component={UserProfile} />
+    <Stack.Screen name="CustomerService" component={CustomerServiceListings}  />
       <Stack.Screen name="ServiceProviderHome" component={ServiceProviderHome}  />
       <Stack.Screen name="ListingDetail" component={ListingDetail} options={{ title: 'Listing Details' }}/>
       <Tab.Screen name="AddListing" component={ListingForm}  />
