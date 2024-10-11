@@ -16,6 +16,7 @@ import { store } from "./store/store";
 import { SettingsProvider } from "./Components/SettingsContext";
 import Icon from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import ListingDetail from './Screens/ServiceListing/ListingDetail';
 
 
 // Stack Navigator for SignIn, SignUp, and other screens
@@ -78,6 +79,7 @@ const MainStack = ({ userRole }) => (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Tab.Screen name="UserProfile" component={UserProfile} />
       <Stack.Screen name="ServiceProviderHome" component={ServiceProviderHome}  />
+      <Stack.Screen name="ListingDetail" component={ListingDetail} options={{ title: 'Listing Details' }}/>
       <Tab.Screen name="AddListing" component={ListingForm}  />
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="SignUp" component={SignUp} />

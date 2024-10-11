@@ -78,6 +78,7 @@ const CustomerServiceListings = ({ navigation }) => {
   }
 
   return (
+  <View style={styles.container}>
     <View style={{ flex: 1 }}>
       <Animated.View style={[styles.sidebar, { width: sidebarWidth }]}>
         <TouchableOpacity onPress={closeSidebar} style={styles.closeButton}>
@@ -144,44 +145,54 @@ const CustomerServiceListings = ({ navigation }) => {
           onChangeText={text => setSearchQuery(text)}
         />
 
-        <FlatList
-          data={filteredListings}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.cardWrapper}>
-              <View style={styles.cardContainer}>
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={{
-                      uri: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80',
-                    }}
-                    style={styles.image}
-                    resizeMode="cover"
-                  />
-                </View>
+<FlatList
+  data={filteredListings}
+  keyExtractor={(item) => item.id.toString()}
+  renderItem={({ item }) => (
+    <TouchableOpacity 
+      onPress={() => navigation.navigate('ListingDetail', { listing: item })} // Navigate to ListingDetail
+    >
+      <View style={styles.cardWrapper}>
+        <View style={styles.cardContainer}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={{
+                uri: item.image || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80',
+              }}
+              style={styles.image}
+              resizeMode="cover"
+            />
+          </View>
 
-                <View style={styles.cardContent}>
-                  <Text style={styles.titleText}>{item.title}</Text>
-                  <Text style={styles.descriptionText}>{item.category}</Text>
-                  <Text style={styles.priceText}>Price: ${item.servicePrice} / {item.payType}</Text>
-
-                  <TouchableOpacity
+          <View style={styles.cardContent}>
+            <Text style={styles.titleText}>{item.title}</Text>
+            <Text style={styles.descriptionText}>Category: {item.category}</Text>
+            <Text style={styles.priceText}>Price: ${item.servicePrice} / {item.payType}</Text>
+            <TouchableOpacity
                     style={styles.button}
                     onPress={() => navigation.navigate('AddListing', { listing: item })}
                   >
                     <Text style={styles.buttonText}>Schedule Appointment</Text>
                   </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          )}
-        />
+          </View>
+        </View>
       </View>
+    </TouchableOpacity>
+  )}
+/>
+      </View>
+    </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container:{
+    flex: 1,
+    
+    backgroundColor: '#f3f4f4',
+
+  },
   sidebar: {
     position: 'absolute',
     left: 0,
@@ -266,7 +277,7 @@ const styles = StyleSheet.create({
   descriptionText: {
     fontSize: 14,
     marginBottom: 0,
-    color: '#4A5568',
+    color: '#2D3748',
   },
   priceText: {
     fontSize: 13,
@@ -277,12 +288,13 @@ const styles = StyleSheet.create({
   button: {
     paddingVertical: 10,
     backgroundColor: '#5B8E55',
-    borderRadius: 8,
+    borderRadius: 15,
   },
   buttonText: {
     color: '#FFFFFF',
     textAlign: 'center',
     fontSize: 10,
+    borderRadius:10,
   },
   filterButton: {
     padding: 10,
@@ -304,6 +316,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     backgroundColor: '#666',
     margin: 10,
+    borderRadius:5,
   },
 });
 
