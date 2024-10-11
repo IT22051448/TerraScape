@@ -14,6 +14,7 @@ const CustomerServiceListings = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredListings, setFilteredListings] = useState([]);
   const [sortOption, setSortOption] = useState('none'); // State for sorting
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   const sidebarWidth = useRef(new Animated.Value(0)).current;
 
@@ -52,12 +53,13 @@ const CustomerServiceListings = ({ navigation }) => {
 
   useEffect(() => {
     let updatedListings = listings.filter(item =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchQuery.toLowerCase())
+      (item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchQuery.toLowerCase())) &&
+      (selectedCategory === '' || selectedCategory === 'All' || item.category === selectedCategory)
     );
 
-     // Apply sorting based on the selected sort option
-     if (sortOption === 'priceLowToHigh') {
+    // Apply sorting based on the selected sort option
+    if (sortOption === 'priceLowToHigh') {
       updatedListings = updatedListings.sort((a, b) => parseFloat(a.servicePrice) - parseFloat(b.servicePrice));
     } else if (sortOption === 'priceHighToLow') {
       updatedListings = updatedListings.sort((a, b) => parseFloat(b.servicePrice) - parseFloat(a.servicePrice));
@@ -65,9 +67,8 @@ const CustomerServiceListings = ({ navigation }) => {
       updatedListings = updatedListings.sort((a, b) => a.title.localeCompare(b.title));
     }
 
-
     setFilteredListings(updatedListings);
-  }, [searchQuery, listings, sortOption]);
+  }, [searchQuery, listings, sortOption, selectedCategory]);
 
   if (isLoading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -86,10 +87,22 @@ const CustomerServiceListings = ({ navigation }) => {
           onValueChange={(itemValue) => setSortOption(itemValue)}
           style={styles.picker}
         >
-          <Picker.Item label="None" value="none" />
+          <Picker.Item label="Sort by" value="none" />
           <Picker.Item label="Price: Low to High" value="priceLowToHigh" />
           <Picker.Item label="Price: High to Low" value="priceHighToLow" />
           <Picker.Item label="Alphabetical" value="alphabetical" />
+        </Picker>
+        {/* Category Picker */}
+        <Picker
+          selectedValue={selectedCategory}
+          onValueChange={(itemValue) => setSelectedCategory(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select a Category" value="All" />
+          <Picker.Item label="Garden Design" value="Garden Design" />
+          <Picker.Item label="Lawn Care" value="Lawn Care" />
+          <Picker.Item label="Hardscaping" value="Hardscaping" />
+          <Picker.Item label="Water Services" value="Water Services" />
         </Picker>
       </Animated.View>
 
@@ -200,7 +213,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     padding: 10,
     borderRadius: 8,
-    borderColor: '#007BFF',
+    borderColor: '#5B8E55',
     borderWidth: 1,
   },
   cardWrapper: {
@@ -214,10 +227,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 16,
     overflow: 'hidden',
+    height: 170,
   },
   imageContainer: {
     width: '30%',
-    height: 150, // Maintain height for image
+    height: 170, // Maintain height for image
     overflow: 'hidden',
   },
   image: {
@@ -228,7 +242,7 @@ const styles = StyleSheet.create({
   cardContent: {
     flex: 1,
     padding: 16,
-    justifyContent: 'space-between', // Adjust layout
+    justifyContent: 'space-between',
   },
   titleText: {
     fontSize: 20,
@@ -241,13 +255,14 @@ const styles = StyleSheet.create({
     color: '#4A5568',
   },
   priceText: {
-    fontSize: 14,
+    fontSize: 13,
     marginBottom: 8,
     color: '#2D3748',
+    fontWeight: 'bold'
   },
   button: {
     paddingVertical: 10,
-    backgroundColor: '#007BFF',
+    backgroundColor: '#5B8E55',
     borderRadius: 8,
   },
   buttonText: {

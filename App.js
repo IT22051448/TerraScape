@@ -40,8 +40,8 @@ const BottomTabNavigator = () => (
     })}
   >
     <Tab.Screen name="CustomerHome" component={CustomerHome} options={{ headerShown: false }}  />
-    <Tab.Screen name="UserProfile" component={UserProfile} options={{ headerShown: false }}/>
     <Tab.Screen name="CustomerService" component={CustomerServiceListings} options={{ headerShown: false }}  />
+    <Tab.Screen name="UserProfile" component={UserProfile} options={{ headerShown: false }}/>
   </Tab.Navigator>
 );
 
