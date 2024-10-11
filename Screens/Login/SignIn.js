@@ -82,6 +82,7 @@ const SignIn = () => {
       if (userData.role === "ServiceProvider") {
         navigation.navigate("ServiceProviderHome", {
           fullName: userData.fullName,
+          userRole: userData.role,
         });
       } else {
         navigation.navigate("Main");

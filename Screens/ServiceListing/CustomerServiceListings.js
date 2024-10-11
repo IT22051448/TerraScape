@@ -163,7 +163,6 @@ const CustomerServiceListings = ({ navigation }) => {
                 <View style={styles.cardContent}>
                   <Text style={styles.titleText}>{item.title}</Text>
                   <Text style={styles.descriptionText}>{item.category}</Text>
-                  <Text style={styles.descriptionText}>{item.description}</Text>
                   <Text style={styles.priceText}>Price: ${item.servicePrice} / {item.payType}</Text>
 
                   <TouchableOpacity
@@ -188,7 +187,7 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     bottom: 0,
-    backgroundColor: '#333',
+    backgroundColor: '#7a7a7a',
     zIndex: 2,
     paddingTop: 50,
   },

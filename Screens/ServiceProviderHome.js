@@ -27,6 +27,7 @@ const ServiceProviderHome = () => {
         <Image
           source={require("../assets/images/profilepic.png")}
           style={styles.profileImage}
+          
         />
         <Text style={styles.nameText}>{fullName}</Text>
         <Text style={styles.roleText}>(Service Provider)</Text>
@@ -48,12 +49,24 @@ const ServiceProviderHome = () => {
       >
         <Text style={styles.buttonText}>Manage Listings</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.buttonPrimary}
+        onPress={() => navigation.navigate("AddListing")}
+      >
+        <Text style={styles.buttonText}>Add New Listing</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.buttonPrimary}
+        onPress={() => navigation.navigate("UserProfile")}
+      >
+        <Text style={styles.buttonText}>User Profile</Text>
+      </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.buttonSecondary}
         onPress={() => navigation.navigate("SignIn")}
       >
-        <Text style={styles.buttonText}>Go Back to Sign In</Text>
+        <Text style={styles.buttonText}>Logout</Text>
       </TouchableOpacity>
     </ImageBackground>
   );

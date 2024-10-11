@@ -5,6 +5,7 @@ module.exports = {
     "./Screens/ServiceListing/ListingPage.{js,jsx,ts,tsx}",
     "./Screens/ServiceListing/ListingForm.{js,jsx,ts,tsx}",
     "./Screens/ServiceListing/CustomerServiceListings.{js,jsx,ts,tsx}",
+    "./Screens/UserProfile.{js,jsx,ts,tsx}",
   ],
   theme: {
     extend: {},

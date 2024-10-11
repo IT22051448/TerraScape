@@ -5,6 +5,7 @@ import { addListing, updateListing } from '../../store/listingsSlice';
 import { db } from '../../utils/firebaseHelper'; // Import the db instance
 import { ref, set, push } from "firebase/database";
 import { Picker } from '@react-native-picker/picker';
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Adjusted import for Ionicons
 
 const ListingForm = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -47,72 +48,110 @@ const ListingForm = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{listing ? 'Update Service Listing' : 'Add Service Listing'}</Text>
-      <TextInput
-        value={title}
-        onChangeText={setTitle}
-        placeholder="Listing Title"
-        style={styles.input}
-      />
-      <TextInput
-        value={description}
-        onChangeText={setDescription}
-        placeholder="Listing Description"
-        style={styles.input}
-      />
-      <View style={styles.priceContainer}>
-        <Text style={styles.priceSymbol}>$</Text>
-        <TextInput
-          value={servicePrice}
-          onChangeText={setServicePrice}
-          placeholder="Service Price"
-          keyboardType="numeric"
-          style={styles.priceInput}
-        />
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" size={24} color="black" />
+        </TouchableOpacity>
+        <Text style={styles.title}>{listing ? 'Update Service Listing' : 'Add Service Listing'}</Text>
       </View>
-      
-      {/* Category Dropdown */}
-      <Text style={styles.label}>Category</Text>
-      <Picker
-        selectedValue={category}
-        style={styles.picker}
-        onValueChange={(itemValue) => setCategory(itemValue)}
-      >
-        <Picker.Item label="Select a Category" value="" />
-        <Picker.Item label="Garden Design" value="Garden Design" />
-        <Picker.Item label="Lawn Care" value="Lawn Care" />
-        <Picker.Item label="Hardscaping" value="Hardscaping" />
-        <Picker.Item label="Water Services" value="Water Services" />
-      </Picker>
-
-      <Text style={styles.label}>Payment Type</Text>
-      <Picker
-        selectedValue={payType}
-        style={styles.picker}
-        onValueChange={(itemValue) => setPayType(itemValue)}
-      >
-        <Picker.Item label="Per hour" value="Per hour" />
-        <Picker.Item label="Per service" value="Per service" />
-      </Picker>
-      <View style={styles.termsContainer}>
-        <TouchableOpacity
-          style={styles.checkboxContainer}
-          onPress={() => setTermsAccepted(!termsAccepted)}
+      <View style={styles.divider}></View>
+      <View style={styles.formContainer}>
+        <TextInput
+          value={title}
+          onChangeText={setTitle}
+          placeholder="Listing Title"
+          style={styles.input}
+        />
+        
+        {/* Description Text Area */}
+        <TextInput
+          value={description}
+          onChangeText={setDescription}
+          placeholder="Listing Description"
+          style={styles.textArea}
+          multiline // Enables multiline input
+          numberOfLines={4} // Initial number of lines to show
+          textAlignVertical="top" // Align text to the top
+        />
+        
+        <View style={styles.priceContainer}>
+          <Text style={styles.priceSymbol}>$</Text>
+          <TextInput
+            value={servicePrice}
+            onChangeText={setServicePrice}
+            placeholder="Service Price"
+            keyboardType="numeric"
+            style={styles.priceInput}
+          />
+        </View>
+        
+        {/* Category Dropdown */}
+        <Text style={styles.label}>Category</Text>
+        <Picker
+          selectedValue={category}
+          style={styles.picker}
+          onValueChange={(itemValue) => setCategory(itemValue)}
         >
-          <Text style={termsAccepted ? styles.checkboxChecked : styles.checkboxUnchecked}>☑</Text>
-          <Text style={styles.termsText}>I agree with the terms and conditions</Text>
+          <Picker.Item label="Select a Category" value="" />
+          <Picker.Item label="Garden Design" value="Garden Design" />
+          <Picker.Item label="Lawn Care" value="Lawn Care" />
+          <Picker.Item label="Hardscaping" value="Hardscaping" />
+          <Picker.Item label="Water Services" value="Water Services" />
+        </Picker>
+
+        <Text style={styles.label}>Payment Type</Text>
+        <Picker
+          selectedValue={payType}
+          style={styles.picker}
+          onValueChange={(itemValue) => setPayType(itemValue)}
+        >
+          <Picker.Item label="Per hour" value="Per hour" />
+          <Picker.Item label="Per service" value="Per service" />
+        </Picker>
+
+        <View style={styles.termsContainer}>
+          <TouchableOpacity
+            style={styles.checkboxContainer}
+            onPress={() => setTermsAccepted(!termsAccepted)}
+          >
+            <Text style={termsAccepted ? styles.checkboxChecked : styles.checkboxUnchecked}>☑</Text>
+            <Text style={styles.termsText}>I agree with the terms and conditions</Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>{listing ? 'Update Listing' : 'Add Listing'}</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>{listing ? 'Update Listing' : 'Add Listing'}</Text>
-      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 24, // Increase the font size for the title
+    fontWeight: 'bold', // Make the title bold
+    marginBottom: 10, // Space below the title
+    flex: 1, // Allow title to take available space
+    textAlign: 'center', // Center the title
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10, // Space below the header
+  },
+  divider: {
+    height: 2, // Height of the divider
+    backgroundColor: '#ccc', // Color of the divider
+    marginBottom: 20, // Space below the divider
+  },
   container: {
+    flex: 1,
     padding: 20,
+  },
+  formContainer: {
+    flex: 1,
+    justifyContent: 'space-evenly', // Evenly space the form items vertically
   },
   input: {
     borderWidth: 2,
@@ -120,6 +159,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     padding: 10,
     borderRadius: 10, // Rounded corners
+  },
+  textArea: {
+    borderWidth: 2,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 20,
+    height: 100, // Height for the text area
   },
   priceContainer: {
     flexDirection: 'row',
@@ -173,7 +220,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#5B8E55',
     padding: 15,
     borderRadius: 10, // Rounded corners for the button
     alignItems: 'center',
