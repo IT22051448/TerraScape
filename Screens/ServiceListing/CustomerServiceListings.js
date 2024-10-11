@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setListings, setLoading, setError } from '../../store/listingsSlice';
 import Icon from 'react-native-vector-icons/Feather';
 import { Picker } from '@react-native-picker/picker';
+import MapWithSlider from './MapWithSlider'; // Import the MapWithSlider component
 
 const CustomerServiceListings = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -13,8 +14,10 @@ const CustomerServiceListings = ({ navigation }) => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredListings, setFilteredListings] = useState([]);
-  const [sortOption, setSortOption] = useState('none'); // State for sorting
+  const [sortOption, setSortOption] = useState('none');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [showMap, setShowMap] = useState(false); // State for showing map
+  const [filterRadius, setFilterRadius] = useState(1000); // Default radius
 
   const sidebarWidth = useRef(new Animated.Value(0)).current;
 
@@ -81,7 +84,6 @@ const CustomerServiceListings = ({ navigation }) => {
           <Icon name="x" size={30} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.sidebarText}>Filters</Text>
-        {/* Sorting options */}
         <Picker
           selectedValue={sortOption}
           onValueChange={(itemValue) => setSortOption(itemValue)}
@@ -92,7 +94,6 @@ const CustomerServiceListings = ({ navigation }) => {
           <Picker.Item label="Price: High to Low" value="priceHighToLow" />
           <Picker.Item label="Alphabetical" value="alphabetical" />
         </Picker>
-        {/* Category Picker */}
         <Picker
           selectedValue={selectedCategory}
           onValueChange={(itemValue) => setSelectedCategory(itemValue)}
@@ -104,7 +105,21 @@ const CustomerServiceListings = ({ navigation }) => {
           <Picker.Item label="Hardscaping" value="Hardscaping" />
           <Picker.Item label="Water Services" value="Water Services" />
         </Picker>
+
+        {/* New Button to Open Map with Slider */}
+        <TouchableOpacity 
+          style={styles.filterButton} 
+          onPress={() => setShowMap(true)}>
+          <Text style={styles.filterButtonText}>Increase Filter Radius</Text>
+        </TouchableOpacity>
       </Animated.View>
+
+      {showMap && (
+        <MapWithSlider 
+          initialRadius={filterRadius} 
+          onClose={() => setShowMap(false)} 
+        />
+      )}
 
       <View style={{ flex: 1, padding: 20 }}>
         <View style={styles.profileSection}>
@@ -269,6 +284,17 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     textAlign: 'center',
     fontSize: 10,
+  },
+  filterButton: {
+    padding: 10,
+    backgroundColor: '#5B8E55',
+    borderRadius: 5,
+    margin: 10,
+    alignItems: 'center',
+  },
+  filterButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
   hamburgerIcon: {
     position: 'absolute',
