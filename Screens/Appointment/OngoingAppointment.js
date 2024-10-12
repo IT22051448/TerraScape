@@ -140,7 +140,7 @@ const OngoingAppointments = () => {
       setNewTime(new Date());
       Alert.alert(
         "Success",
-        `Appointment rescheduled to ${formattedDate} at ${formattedTime}.`
+        `Request sent to Reschedule Appointment to ${formattedDate} at ${formattedTime}.`
       );
     } catch (error) {
       Alert.alert("Error", "Failed to reschedule the appointment.");
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#eef7d7",
   },
   backButton: {
     marginBottom: 20,

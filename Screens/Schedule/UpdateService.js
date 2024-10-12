@@ -223,7 +223,7 @@ const UpdateService = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: "#e9f5fb",
+    backgroundColor: "#eef7d7",
     flex: 1,
     borderRadius: 10,
     elevation: 3,

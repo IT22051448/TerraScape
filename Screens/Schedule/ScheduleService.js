@@ -209,7 +209,7 @@ const ScheduleService = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: "#f0f8ff",
+    backgroundColor: "#eef7d7",
     flex: 1,
   },
   header: {
@@ -225,7 +225,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    textAlign: "center",
+    textAlign: "auto",
     color: "#2c3e50",
     flex: 1,
   },

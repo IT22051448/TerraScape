@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#eef7d7",
   },
   backButton: {
     marginBottom: 20,

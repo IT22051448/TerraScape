@@ -135,7 +135,7 @@ const ViewScheduledServices = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: "#f0f8ff",
+    backgroundColor: "#eef7d7",
     flex: 1,
   },
   backButton: {
