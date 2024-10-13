@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import TabNavigation from "./App/Navigations/TabNavigation"; // Adjust the path as needed
-import * as Location from "expo-location"; // Use expo-location for location access
-import UserLocation from "./App/context/userLocation"; // Context for user location
-import "react-native-get-random-values"; // Needed for generating random values
+import TabNavigation from "./App/Navigations/TabNavigation"; 
+import * as Location from "expo-location"; 
+import UserLocation from "./App/context/userLocation"; 
+import "react-native-get-random-values";
 
 export default function App() {
   const [location, setLocation] = useState(null);
@@ -37,16 +37,16 @@ export default function App() {
         }
       );
 
-      return subscription; // Return the subscription object for cleanup
+      return subscription; 
     };
 
-    const subscriptionPromise = getLocation(); // Save the subscription promise
+    const subscriptionPromise = getLocation(); 
 
     // Cleanup function to remove the subscription
     return () => {
       subscriptionPromise.then((subscription) => {
         if (subscription?.remove) {
-          subscription.remove(); // Remove subscription if it exists
+          subscription.remove(); 
         }
       });
     };

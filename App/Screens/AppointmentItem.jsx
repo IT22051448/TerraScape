@@ -5,9 +5,9 @@ export default function AppointmentItem({ item }) {
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: item.imageUrl }} // Ensure it's wrapped in an object with 'uri'
+        source={{ uri: item.imageUrl }} 
         style={styles.image}
-        resizeMode="cover" // Optional: Adjusts how the image should be resized to fit its container
+        resizeMode="cover" 
       />
       <View style={styles.overlay}>
         <Text style={styles.title}>{item.title}</Text>
@@ -36,8 +36,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: add a semi-transparent background for better text visibility
-    borderRadius: 10, // Match the image border radius
+    backgroundColor: "rgba(0, 0, 0, 0.5)", 
+    borderRadius: 10, 
   },
   title: {
     color: "#ffffff",

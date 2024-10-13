@@ -15,7 +15,6 @@ import useAppointments from "../utils/fetchAppointments";
 export default function AppointmentList({ navigation }) {
   const { appointments, loading } = useAppointments();
 
-  // Function to determine the status text color
   const getStatusStyle = (status) => {
     switch (status) {
       case "Pending":
@@ -55,10 +54,10 @@ export default function AppointmentList({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Add the Header component */}
+     
       <Header title="Appointment List" />
 
-      {/* FlatList to show the appointments */}
+      
       <FlatList
         data={appointments}
         keyExtractor={(item) => item.id.toString()}
@@ -73,7 +72,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: "#f5f5f5", // Added background color for better styling
+    backgroundColor: "#f5f5f5", 
   },
   listContainer: {
     paddingBottom: 20,

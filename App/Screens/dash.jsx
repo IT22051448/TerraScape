@@ -55,7 +55,6 @@ export default function AppointmentList({ navigation }) {
     </TouchableOpacity>
   );
 
-  // Function to determine the status text color
   const getStatusStyle = (status) => {
     switch (status) {
       case "Pending":
@@ -63,7 +62,7 @@ export default function AppointmentList({ navigation }) {
       case "Done":
         return styles.done;
       case "In Progress":
-        return styles.inProgress; // Add this style if needed
+        return styles.inProgress; 
       default:
         return styles.default;
     }

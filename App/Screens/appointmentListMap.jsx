@@ -5,7 +5,7 @@ import AppointmentItem from "./AppointmentItem";
 
 
 export default function AppointmentListMap() {
-  const { appointments, loading } = useAppointments(); // Use the custom hook to fetch appointments
+  const { appointments, loading } = useAppointments(); 
 
   if (loading) {
     return <Text>Loading appointments...</Text>; // Show loading state
@@ -21,13 +21,13 @@ export default function AppointmentListMap() {
           renderItem={({ item }) => (
             <View style={styles.appointmentItem}>
               <AppointmentItem item={item}></AppointmentItem>
-              {/* Add more fields here if needed */}
+            
             </View>
           )}
-          keyExtractor={(item) => item.id} // Use the appointment ID for the key
+          keyExtractor={(item) => item.id}
         />
       ) : (
-        <Text>No appointments available</Text> // Handle empty state
+        <Text>No appointments available</Text> 
       )}
     </View>
   );

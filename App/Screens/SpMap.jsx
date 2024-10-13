@@ -14,7 +14,7 @@ export const SpMap = () => {
       <View style={styles.headerContainer}>
         <Header />
       </View>
-      {loading ? ( // Show a loading indicator while appointments are loading
+      {loading ? ( 
         <ActivityIndicator
           size="large"
           color="#0000ff"

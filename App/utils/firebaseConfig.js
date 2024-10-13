@@ -1,8 +1,7 @@
-// Import the necessary functions from the Firebase SDKs
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
-// Your web app's Firebase configuration
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDZ7EU061KNDPWak-B8u4EM0xCvi-rR9vk",
   authDomain: "terrascape-234a7.firebaseapp.com",

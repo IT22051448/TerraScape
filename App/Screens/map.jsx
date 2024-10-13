@@ -5,9 +5,9 @@ import UserLocationContext from "../context/userLocation";
 import useAppointments from "../utils/fetchAppointments";
 
 export default function Map() {
-  const { location } = useContext(UserLocationContext); // Get user location from context
-  const { appointments, loading } = useAppointments(); // Fetch appointments from Firestore
-  const [mapRegion, setMapRegion] = useState(null); // State to hold the map region
+  const { location } = useContext(UserLocationContext); 
+  const { appointments, loading } = useAppointments(); 
+  const [mapRegion, setMapRegion] = useState(null); 
 
   useEffect(() => {
     if (loading) {
@@ -54,7 +54,6 @@ export default function Map() {
     return <Text>Loading appointments...</Text>;
   }
 
-  // Ensure the user's location is available
   if (!location?.latitude || !location?.longitude) {
     return <Text>Fetching location...</Text>;
   }
@@ -100,7 +99,7 @@ export default function Map() {
             console.warn(
               `Invalid coordinates for appointment ID: ${appointment.id}`
             );
-            return null; // Skip rendering marker for this appointment
+            return null; 
           }
         })}
       </MapView>
@@ -110,11 +109,11 @@ export default function Map() {
 
 const styles = StyleSheet.create({
   container: {
-    width: 400, // Set a specific width
-    height: 600, // Set a specific height
-    alignSelf: "center", // Center the map horizontally
+    width: 400, 
+    height: 600, 
+    alignSelf: "center", 
   },
   map: {
-    flex: 1, // Ensure the map takes all the space in the container
+    flex: 1, 
   },
 });
