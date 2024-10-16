@@ -1,31 +1,35 @@
 {
   "expo": {
-    "name": "Thumbapanni",
-    "slug": "Thumbapanni",
+    "name": "TeraScape",
+    "slug": "TeraScape",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/logo.png",
-    "userInterfaceStyle": "white",
-    "splash": {
-      "image": "./assets/images/logo.png",
-      "resizeMode": "contain",
-      "backgroundColor": "black"
+    "web": {
+      "favicon": "./assets/favicon.png"
     },
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "plugins": [],
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/blck logo2.png",
-        "backgroundColor": "#fff"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
       },
-      "permissions": [
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
-      ]
-    },
-    "web": {
-      "favicon": "./assets/images/logo.png"
+      "package": "com.anonymous.TeraScape"
     }
   }
 }
